@@ -1,0 +1,39 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: {{ template "ibm-blockchain-network.name" . }}-debug-nfs
+  labels:
+    app: {{ template "ibm-blockchain-network.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: {{ template "ibm-blockchain-network.fullname" . }}-org1peer1
+      labels:
+        app: {{ template "ibm-blockchain-network.name" . }}
+        chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
+        name: {{ template "ibm-blockchain-network.name" . }}-debug-nfs
+    spec:
+      containers:
+      - name: debug
+        image: alpine
+        command: ["ash","-c","while true; do sleep 15s; done"]
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /shared
+          name: {{ template "ibm-blockchain-shared-pvc.name" . }}
+        - mountPath: /home
+          name: composer-credentials
+      volumes:
+      - name: {{ template "ibm-blockchain-shared-pvc.name" . }}
+        persistentVolumeClaim:
+          claimName: {{ template "ibm-blockchain-shared-pvc.name" . }}
+      - name: composer-credentials
+        hostPath:
+          path: /tmp/composer

@@ -15,10 +15,9 @@ spec:
   accessModes:
     - ReadWriteMany
   nfs:
-    server: nfs-server.default.svc.cluster.local
-    path: "/"
-#  hostPath:
-#    path: "/tmp"
+    server: {{ .Values.nfs.service.name }}.{{ .Values.nfs.service.namespace }}.svc.cluster.local
+    path: {{ .Values.nfs.path }}
+...
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
@@ -36,3 +35,4 @@ spec:
   resources:
     requests:
       storage: 1Gi
+...

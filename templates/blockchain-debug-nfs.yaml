@@ -12,7 +12,7 @@ spec:
   replicas: 1
   template:
     metadata:
-      name: {{ template "ibm-blockchain-network.fullname" . }}-org1peer1
+      name: {{ template "ibm-blockchain-network.name" . }}-org1peer1
       labels:
         app: {{ template "ibm-blockchain-network.name" . }}
         chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
@@ -36,4 +36,4 @@ spec:
           claimName: {{ template "ibm-blockchain-shared-pvc.name" . }}
       - name: composer-credentials
         hostPath:
-          path: /tmp/composer
+          path: /home/composer

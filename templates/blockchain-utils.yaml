@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ template "ibm-blockchain-network.fullname" . }}-utils
+  name: {{ template "ibm-blockchain-network.name" . }}-utils
   labels:
     app: {{ template "ibm-blockchain-network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
@@ -19,7 +19,7 @@ spec:
       path: /var/run/docker.sock
   - name: composer-credentials
     hostPath:
-      path: /tmp/composer
+      path: /home/composer
   containers:
   - name: cryptogen
     image: {{ .Values.blockchain.toolsImage }}

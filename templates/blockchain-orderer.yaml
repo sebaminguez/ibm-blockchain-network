@@ -2,7 +2,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{ template "ibm-blockchain-network.fullname" . }}-orderer
+  name: {{ template "ibm-blockchain-network.name" . }}-orderer
   labels:
     app: {{ template "ibm-blockchain-network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
@@ -12,13 +12,13 @@ spec:
   replicas: 1
   template:
     metadata:
-      name: {{ template "ibm-blockchain-network.fullname" . }}-orderer
+      name: {{ template "ibm-blockchain-network.name" . }}-orderer
       labels:
         app: {{ template "ibm-blockchain-network.name" . }}
         chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
-        name: {{ template "ibm-blockchain-network.fullname" . }}-orderer
+        name: {{ template "ibm-blockchain-network.name" . }}-orderer
     spec:
       volumes:
       - name: {{ template "ibm-blockchain-shared-pvc.name" . }}

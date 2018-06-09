@@ -42,10 +42,10 @@ persistence:
   storageClass: ""
 
 blockchain:
-  toolsImage: ibmblockchain/fabric-tools:1.0.0
-  ordererImage: ibmblockchain/fabric-orderer:1.0.0
-  caImage: ibmblockchain/fabric-ca:1.0.0
-  peerImage: ibmblockchain/fabric-peer:1.0.0
+  toolsImage: ibmblockchain/fabric-tools:1.0.3
+  ordererImage: ibmblockchain/fabric-orderer:1.0.3
+  caImage: ibmblockchain/fabric-ca:1.0.3
+  peerImage: ibmblockchain/fabric-peer:1.0.3
   pullPolicy: IfNotPresent
 
 # Added for NFS Service on Kubernetes Engine

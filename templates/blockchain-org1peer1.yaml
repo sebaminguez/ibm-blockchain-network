@@ -27,7 +27,6 @@ spec:
       - name: dockersocket
         hostPath:
           path: /var/run/docker.sock
-
       containers:
       - name: org1peer1
         image: {{ .Values.blockchain.peerImage }}
@@ -51,19 +50,25 @@ spec:
         - name: CORE_PEER_NETWORKID
           value: nid1
         - name: CORE_PEER_ADDRESS
-          value: {{ template "ibm-blockchain-network.name" . }}-org1peer1:5010
+          value: {{ template "ibm-blockchain-network.name" . }}-org1peer1:30110
         - name: CORE_PEER_LISTENADDRESS
-          value: 0.0.0.0:5010
+          value: 0.0.0.0:30110
         - name: CORE_PEER_EVENTS_ADDRESS
-          value: 0.0.0.0:5011
+          value: 0.0.0.0:30111
+        - name: CORE_PEER_GOSSIP_BOOTSTRAP
+          value: {{ template "ibm-blockchain-network.name" . }}-org1peer1:30110
+        - name: CORE_PEER_GOSSIP_ORGLEADER	
+          value: "true"
+        - name: CORE_PEER_GOSSIP_SKIPHANDSHAKE	
+          value: "true"
         - name: CORE_PEER_COMMITTER_ENABLED
           value: "true"
         - name: CORE_PEER_PROFILE_ENABLED
           value: "true"
-        - name: CORE_PEER_DISCOVERY_PERIOD
-          value: 60s
-        - name: CORE_PEER_DISCOVERY_TOUCHPERIOD
-          value: 60s
+        # - name: CORE_PEER_DISCOVERY_PERIOD
+        #   value: 60s
+        # - name: CORE_PEER_DISCOVERY_TOUCHPERIOD
+        #   value: 60s
         - name: CORE_VM_ENDPOINT
           value: unix:///host/var/run/docker.sock
         - name: CORE_PEER_LOCALMSPID
@@ -92,8 +97,8 @@ spec:
           value: "false"
         - name: CORE_LEDGER_STATE_STATEDATABASE
           value: goleveldb
-        - name: PEER_CFG_PATH
-          value: peer_config/
+        # - name: PEER_CFG_PATH
+        #   value: peer_config/
         - name: FABRIC_CFG_PATH
           value: /etc/hyperledger/fabric/
         - name: ORDERER_URL

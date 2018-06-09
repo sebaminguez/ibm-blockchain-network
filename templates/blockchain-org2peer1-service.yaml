@@ -17,10 +17,12 @@ spec:
     release: {{ .Release.Name }}
   ports:
   - protocol: TCP
-    port: 5010
+    port: 30210
     nodePort: 30210
+    targetPort: 30210
     name: grpc
   - protocol: TCP
-    port: 5011
+    port: 30211
     nodePort: 30211
+    targetPort: 30211
     name: events

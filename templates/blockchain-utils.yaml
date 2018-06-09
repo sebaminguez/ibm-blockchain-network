@@ -11,9 +11,9 @@ metadata:
 spec:
   restartPolicy: "Never"
   volumes:
-  - name: {{ template "ibm-blockchain-shared-pvc.name" . }}
+  - name: {{ template "ibm-blockchain-shared.name" . }}-pvc
     persistentVolumeClaim:
-     claimName: {{ template "ibm-blockchain-shared-pvc.name" . }}
+     claimName: {{ template "ibm-blockchain-shared.name" . }}-pvc
   - name: dockersocket
     hostPath:
       path: /var/run/docker.sock
@@ -40,7 +40,7 @@ spec:
           touch /shared/status_cryptogen_complete
     volumeMounts:
     - mountPath: /shared
-      name: {{ template "ibm-blockchain-shared-pvc.name" . }}
+      name: {{ template "ibm-blockchain-shared.name" . }}-pvc
   - name: configtxgen
     image: {{ .Values.blockchain.toolsImage }}
     imagePullPolicy: {{ .Values.blockchain.pullPolicy }}
@@ -48,13 +48,11 @@ spec:
       - sh
       - -c
       - |
-        sleep 1
-
+        sleep 2s
         while [ ! -f /shared/status_cryptogen_complete ]; do
           echo Waiting for cryptogen
-          sleep 1
+          sleep 5s
         done
-
         echo 'sample config is =>' &&
         ls /sampleconfig &&
         cp /sampleconfig/configtx.yaml /shared/configtx.yaml &&
@@ -83,7 +81,7 @@ spec:
     #   value: "netdns=go"
     volumeMounts:
     - mountPath: /shared
-      name: {{ template "ibm-blockchain-shared-pvc.name" . }}
+      name: {{ template "ibm-blockchain-shared.name" . }}-pvc
   - name: bootstrap
     image: {{ .Values.blockchain.toolsImage }}
     imagePullPolicy: {{ .Values.blockchain.pullPolicy }}
@@ -91,12 +89,11 @@ spec:
       - sh
       - -c
       - |
-        sleep 1
+        sleep 2s
         echo "Starting bootstrap"
-
         while [ ! -f /shared/status_configtxgen_complete ]; do
           echo Waiting for configtxgen
-          sleep 1
+          sleep 5s
         done
 
         echo \"Starting bootstrap\" &&
@@ -109,7 +106,7 @@ spec:
         echo 'Done with bootstrapping'
     volumeMounts:
     - mountPath: /shared
-      name: {{ template "ibm-blockchain-shared-pvc.name" . }}
+      name: {{ template "ibm-blockchain-shared.name" . }}-pvc
     - mountPath: /home
       name: composer-credentials
 

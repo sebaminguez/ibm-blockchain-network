@@ -21,9 +21,9 @@ spec:
         name: {{ template "ibm-blockchain-network.name" . }}-org2peer1
     spec:
       volumes:
-      - name: {{ template "ibm-blockchain-shared-pvc.name" . }}
+      - name: {{ template "ibm-blockchain-shared.name" . }}-pvc
         persistentVolumeClaim:
-         claimName: {{ template "ibm-blockchain-shared-pvc.name" . }}
+         claimName: {{ template "ibm-blockchain-shared.name" . }}-pvc
       - name: dockersocket
         hostPath:
           path: /var/run/docker.sock
@@ -35,11 +35,10 @@ spec:
           - sh
           - -c
           - |
-            sleep 1
-
+            sleep 2s
             while [ ! -f /shared/bootstrapped ]; do
               echo Waiting for bootstrap
-              sleep 1
+              sleep 5s
             done
 
             touch /shared/status_org2peer1_complete &&
@@ -107,6 +106,6 @@ spec:
           value: "netdns=go"
         volumeMounts:
         - mountPath: /shared
-          name: {{ template "ibm-blockchain-shared-pvc.name" . }}
+          name: {{ template "ibm-blockchain-shared.name" . }}-pvc
         - mountPath: /host/var/run/docker.sock
           name: dockersocket

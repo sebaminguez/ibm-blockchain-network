@@ -2,7 +2,7 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: {{ template "ibm-blockchain-shared-pvc.name" . }}
+  name: {{ template "ibm-blockchain-shared.name" . }}-pv
   labels:
     app: {{ template "ibm-blockchain-network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
@@ -22,7 +22,7 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ template "ibm-blockchain-shared-pvc.name" . }}
+  name: {{ template "ibm-blockchain-shared.name" . }}-pvc
   labels:
     app: {{ template "ibm-blockchain-network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
@@ -35,4 +35,48 @@ spec:
   resources:
     requests:
       storage: 1Gi
+  select:
+    matchLabels:
+      name: {{ template "ibm-blockchain-shared.name" . }}-pv
+...
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: {{ template "ibm-blockchain-composer.name" . }}-pv
+  labels:
+    app: {{ template "ibm-blockchain-network.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    type: local
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: nfs.default.svc.cluster.local
+    path: "/"
+...
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ template "ibm-blockchain-composer.name" . }}-pvc
+  labels:
+    app: {{ template "ibm-blockchain-network.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  selector:
+    matchLabels:
+      name: {{ template "ibm-blockchain-composer.name" . }}-pv
 ...

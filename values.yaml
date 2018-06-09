@@ -54,3 +54,7 @@ nfs:
     name: nfs
     namespace: default
   path: "/"
+
+# Added for Channel
+channel:
+  name: channel1

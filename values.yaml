@@ -41,11 +41,16 @@ persistence:
   # from the templates. If set, use the defined storage class and do not create pvs.
   storageClass: ""
 
-blockchain:
+fabric:
   toolsImage: ibmblockchain/fabric-tools:1.0.3
   ordererImage: ibmblockchain/fabric-orderer:1.0.3
   caImage: ibmblockchain/fabric-ca:1.0.3
   peerImage: ibmblockchain/fabric-peer:1.0.3
+  pullPolicy: IfNotPresent
+
+composer:
+  cliImage: ibmblockchain/composer-cli:0.16.2
+  playgroundImage: ibmblockchain/composer-playground:0.16.2
   pullPolicy: IfNotPresent
 
 # Added for NFS Service on Kubernetes Engine

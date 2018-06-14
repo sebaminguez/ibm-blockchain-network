@@ -26,8 +26,8 @@ spec:
          claimName: {{ template "ibm-blockchain-shared.name" . }}-pvc
       containers:
       - name: ca
-        image: {{ .Values.blockchain.caImage }}
-        imagePullPolicy: {{ .Values.blockchain.pullPolicy }}
+        image: {{ .Values.fabric.caImage }}
+        imagePullPolicy: {{ .Values.fabric.pullPolicy }}
         command:
         - sh
         - -c

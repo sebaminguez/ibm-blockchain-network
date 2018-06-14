@@ -13,7 +13,7 @@ metadata:
 spec:
   containers:
   - name: {{ .Release.Name }}-test
-    image: {{ .Values.blockchain.toolsImage }}
+    image: {{ .Values.fabric.toolsImage }}
     command: 
       - sh
       - -c

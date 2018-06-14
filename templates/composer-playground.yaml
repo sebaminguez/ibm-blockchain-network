@@ -1,0 +1,42 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: composer-playground
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: composer-playground
+    spec:
+      volumes:
+      - name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+        persistentVolumeClaim:
+          claimName: {{ template "ibm-blockchain-shared.name" . }}-pvc
+      - name: {{ template "ibm-blockchain-composer.name" . }}-pvc
+        persistentVolumeClaim:
+          claimName: {{ template "ibm-blockchain-composer.name" . }}-pvc
+      initContainers:
+      - name: init-service
+        image: busybox:1.28.4
+        command:
+        - sh
+        - -c
+        - |
+          while [ ! -f /shared/status_composer_card_import_complete ]; do
+            echo Waiting for Composer card import to complete
+            sleep 5s
+          done
+        volumeMounts:
+        - name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+          mountPath: /shared
+        - name: {{ template "ibm-blockchain-composer.name" . }}-pvc
+          mountPath: /home/composer/.composer
+      containers:
+      - name: composer-playground
+        image: {{ .Values.composer.playgroundImage }}
+        imagePullPolicy: {{ .Values.composer.pullPolicy }}
+        volumeMounts:
+        - name: {{ template "ibm-blockchain-composer.name" . }}-pvc
+          mountPath: /home/composer/.composer

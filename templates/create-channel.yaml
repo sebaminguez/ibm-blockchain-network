@@ -25,15 +25,14 @@ spec:
       name: {{ template "ibm-blockchain-shared.name" . }}-pvc
   containers:
   - name: createchanneltx
-    image: {{ .Values.blockchain.toolsImage }}
-    imagePullPolicy: {{ .Values.blockchain.pullPolicy }}
+    image: {{ .Values.fabric.toolsImage }}
+    imagePullPolicy: {{ .Values.fabric.pullPolicy }}
     command:
     - sh
     - -c
     - |
       configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ${CHANNEL_NAME}.tx -channelID ${CHANNEL_NAME}
-      touch /shared/status_channeltx_complete &&
-      rm /shared/status_bootstrapping_complete
+      touch /shared/status_channeltx_complete # && rm /shared/status_bootstrapping_complete
     env:
     - name: CHANNEL_NAME
       value: {{ .Values.channel.name }}
@@ -45,8 +44,8 @@ spec:
     - mountPath: /shared
       name: {{ template "ibm-blockchain-shared.name" . }}-pvc
   - name: createchannel
-    image: {{ .Values.blockchain.peerImage }}
-    imagePullPolicy: {{ .Values.blockchain.pullPolicy }}
+    image: {{ .Values.fabric.peerImage }}
+    imagePullPolicy: {{ .Values.fabric.pullPolicy }}
     command: 
     - sh
     - -c

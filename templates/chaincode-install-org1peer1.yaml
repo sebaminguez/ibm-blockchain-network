@@ -11,8 +11,8 @@ spec:
       claimName: {{ template "ibm-blockchain-shared.name" . }}-pvc
   containers:
   - name: chaincodeinstall
-    image: {{ .Values.blockchain.toolsImage }}
-    imagePullPolicy: {{ .Values.blockchain.pullPolicy }}
+    image: {{ .Values.fabric.toolsImage }}
+    imagePullPolicy: {{ .Values.fabric.pullPolicy }}
     command:
     - sh
     - -c

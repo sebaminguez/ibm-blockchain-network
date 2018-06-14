@@ -17,53 +17,53 @@ spec:
   - name: dockersocket
     hostPath:
       path: /var/run/docker.sock
-  - name: composer-credentials
-    hostPath:
-      path: /home/composer
+  - name: {{ template "ibm-blockchain-composer.name" . }}-pvc
+    persistentVolumeClaim:
+      claimName: {{ template "ibm-blockchain-composer.name" . }}-pvc
   containers:
   - name: cryptogen
-    image: {{ .Values.blockchain.toolsImage }}
-    imagePullPolicy: {{ .Values.blockchain.pullPolicy }}
+    image: {{ .Values.fabric.toolsImage }}
+    imagePullPolicy: {{ .Values.fabric.pullPolicy }}
     command:
-        - sh
-        - -c
-        - |
-          cryptogen generate --config /sampleconfig/crypto-config.yaml &&
-          cp -r crypto-config /shared/
+    - sh
+    - -c
+    - |
+      cryptogen generate --config /sampleconfig/crypto-config.yaml &&
+      cp -r crypto-config /shared/
 
-          for file in $(find /shared/ -iname *_sk); do
-            dir=$(dirname $file); mv ${dir}/*_sk ${dir}/key.pem
-          done
+      for file in $(find /shared/ -iname *_sk); do
+        dir=$(dirname $file); mv ${dir}/*_sk ${dir}/key.pem
+      done
 
-          find /shared -type d | xargs chmod a+rx &&
-          find /shared -type f | xargs chmod a+r &&
-          touch /shared/status_cryptogen_complete
+      find /shared -type d | xargs chmod a+rx &&
+      find /shared -type f | xargs chmod a+r &&
+      touch /shared/status_cryptogen_complete
     volumeMounts:
     - mountPath: /shared
       name: {{ template "ibm-blockchain-shared.name" . }}-pvc
   - name: configtxgen
-    image: {{ .Values.blockchain.toolsImage }}
-    imagePullPolicy: {{ .Values.blockchain.pullPolicy }}
+    image: {{ .Values.fabric.toolsImage }}
+    imagePullPolicy: {{ .Values.fabric.pullPolicy }}
     command:
-      - sh
-      - -c
-      - |
-        sleep 2s
-        while [ ! -f /shared/status_cryptogen_complete ]; do
-          echo Waiting for cryptogen
-          sleep 5s
-        done
-        echo 'sample config is =>' &&
-        ls /sampleconfig &&
-        cp /sampleconfig/configtx.yaml /shared/configtx.yaml &&
-        echo 'shared after copy is =>' &&
-        ls /shared &&
-        cd /shared/ &&
-        configtxgen -profile TwoOrgsOrdererGenesis -outputBlock orderer.block &&
-        find /shared -type d | xargs chmod a+rx &&
-        find /shared -type f | xargs chmod a+r &&
-        touch /shared/status_configtxgen_complete &&
-        rm -f /shared/status_cryptogen_complete
+    - sh
+    - -c
+    - |
+      sleep 2s
+      while [ ! -f /shared/status_cryptogen_complete ]; do
+        echo Waiting for cryptogen
+        sleep 5s
+      done
+      echo 'sample config is =>' &&
+      ls /sampleconfig &&
+      cp /sampleconfig/configtx.yaml /shared/configtx.yaml &&
+      echo 'shared after copy is =>' &&
+      ls /shared &&
+      cd /shared/ &&
+      configtxgen -profile TwoOrgsOrdererGenesis -outputBlock orderer.block &&
+      find /shared -type d | xargs chmod a+rx &&
+      find /shared -type f | xargs chmod a+r &&
+      touch /shared/status_configtxgen_complete &&
+      rm -f /shared/status_cryptogen_complete
     env:
      - name: PEERHOST1
        value: {{ template "ibm-blockchain-network.name" . }}-org1peer1
@@ -83,8 +83,8 @@ spec:
     - mountPath: /shared
       name: {{ template "ibm-blockchain-shared.name" . }}-pvc
   - name: bootstrap
-    image: {{ .Values.blockchain.toolsImage }}
-    imagePullPolicy: {{ .Values.blockchain.pullPolicy }}
+    image: {{ .Values.fabric.toolsImage }}
+    imagePullPolicy: {{ .Values.fabric.pullPolicy }}
     command:
       - sh
       - -c
@@ -103,10 +103,10 @@ spec:
         rm -f /shared/status_configtxgen_complete &&
         mkdir -p /home/composer/.composer &&
         chown 1000 /home/composer/.composer &&
+        touch /shared/status_bootstrapping_complete &&
         echo 'Done with bootstrapping'
     volumeMounts:
     - mountPath: /shared
       name: {{ template "ibm-blockchain-shared.name" . }}-pvc
-    - mountPath: /home
-      name: composer-credentials
-
+    - mountPath: /home/composer/.composer
+      name: {{ template "ibm-blockchain-composer.name" . }}-pvc

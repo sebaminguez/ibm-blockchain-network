@@ -24,7 +24,6 @@ spec:
       - name: {{ template "ibm-blockchain-shared.name" . }}-pvc
         persistentVolumeClaim:
          claimName: {{ template "ibm-blockchain-shared.name" . }}-pvc
-
       containers:
       - name: ca
         image: {{ .Values.blockchain.caImage }}

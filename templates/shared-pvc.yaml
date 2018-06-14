@@ -56,8 +56,8 @@ spec:
   accessModes:
     - ReadWriteMany
   nfs:
-    server: nfs.default.svc.cluster.local
-    path: "/"
+    server: {{ .Values.nfs.service.name }}.{{ .Values.nfs.service.namespace }}.svc.cluster.local
+    path: {{ .Values.nfs.path }}
 ...
 ---
 kind: PersistentVolumeClaim
@@ -76,7 +76,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  selector:
+  select:
     matchLabels:
       name: {{ template "ibm-blockchain-composer.name" . }}-pv
 ...

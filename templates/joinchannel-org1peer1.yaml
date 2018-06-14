@@ -2,11 +2,11 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: joinchannel-org2peer1
+  name: joinchannel-org1peer1
 spec:
   restartPolicy: "Never"
   volumes:
-  - name: shared
+  - name: {{ template "ibm-blockchain-shared.name" . }}-pvc
     persistentVolumeClaim:
       claimName: {{ template "ibm-blockchain-shared.name" . }}-pvc
 
@@ -20,13 +20,17 @@ spec:
     - |
       echo Sleeping for 120s hoping to awake once the Orderer|Channel are ready
       sleep 120s
+
       while [ ! -f /shared/status_channelcreate_complete ];
       do
         echo Waiting for status_channelcreate_complete
         sleep 5s
       done
+
       peer channel fetch config --orderer ${ORDERER_URL} --channelID ${CHANNEL_NAME}
       peer channel join --blockpath ${CHANNEL_NAME}_config.block
+
+      touch /shared/status_joinchannel_org1peer1_complete
     env:
     - name: CHANNEL_NAME
       value: {{ .Values.channel.name }}
@@ -35,18 +39,18 @@ spec:
     - name: ORDERER_URL
       value: {{ template "ibm-blockchain-network.name" . }}-orderer:31010
     - name: CORE_PEER_ADDRESS
-      value: {{ template "ibm-blockchain-network.name" . }}-org2peer1:30210
+      value: {{ template "ibm-blockchain-network.name" . }}-org1peer1:30110
     - name: CORE_PEER_LOCALMSPID
-      value: Org2MSP
+      value: Org1MSP
     - name: CORE_LOGGING_LEVEL
       value: debug
     - name: CORE_PEER_MSPCONFIGPATH
-      value: /shared/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+      value: /shared/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
     - name: FABRIC_CFG_PATH
       value: /etc/hyperledger/fabric
     - name: GODEBUG
       value: "netdns=go"
     volumeMounts:
     - mountPath: /shared
-      name: shared
+      name: {{ template "ibm-blockchain-shared.name" . }}-pvc
 ...

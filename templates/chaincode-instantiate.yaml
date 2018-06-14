@@ -1,0 +1,55 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: chaincodeinstantiate
+spec:
+  restartPolicy: "Never"
+  volumes:
+  - name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+    persistentVolumeClaim:
+      claimName: {{ template "ibm-blockchain-shared.name" . }}-pvc
+
+  containers:
+  - name: chaincodeinstantiate
+    image: {{ .Values.blockchain.toolsImage }}
+    imagePullPolicy: {{ .Values.blockchain.pullPolicy }}
+    command:
+    - sh
+    - -c
+    - |
+      while [ ! -f /shared/status_chaincode_install_org1peer1_complete ] || [ ! -f /shared/status_chaincode_install_org2peer1_complete ]; do
+        echo Waiting for Chaincode installs on org1peer1 and org2peer1 to complete
+        sleep 5s
+      done
+
+      peer chaincode instantiate \
+      --orderer blockchain-orderer:31010 \
+      --channelID ${CHANNEL_NAME} \
+      --name ${CHAINCODE_NAME} \
+      --version ${CHAINCODE_VERSION} \
+      --ctor '{\"Args\":[\"init\",\"a\",\"100\",\"b\",\"200\"]}'
+
+      rm /shared/status_chaincode_install_org1peer1_complete &&
+      rm /shared/status_chaincode_install_org2peer1_complete &&
+      touch /shared/status_chaincode_instantiate_complete
+    env:
+    - name: CHANNEL_NAME
+      value: {{ .Values.channel.name }}
+    - name: CHAINCODE_NAME
+      value: {{ .Values.chaincode.name }}
+    - name: CHAINCODE_VERSION
+      value: {{ .Values.chaincode.version }}
+    - name: FABRIC_CFG_PATH
+      value: /etc/hyperledger/fabric
+    - name: CORE_PEER_MSPCONFIGPATH
+      value: /shared/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+    - name: CORE_PEER_LOCALMSPID
+      value: Org1MSP
+    - name: CORE_PEER_ADDRESS
+      value: {{ template "ibm-blockchain-network.name" . }}-org1peer1:30110
+    - name: GODEBUG
+      value: "netdns=go"
+    volumeMounts:
+    - mountPath: /shared
+      name: {{ template "ibm-blockchain-shared.name" . }}-pvc

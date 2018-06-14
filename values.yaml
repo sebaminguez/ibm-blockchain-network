@@ -58,3 +58,8 @@ nfs:
 # Added for Channel
 channel:
   name: channel1
+
+# Added for Chaincode
+chaincode:
+  name: example02
+  version: v1

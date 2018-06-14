@@ -20,16 +20,6 @@ spec:
         heritage: {{ .Release.Service }}
         name: {{ template "ibm-blockchain-network.name" . }}-debug-nfs
     spec:
-      containers:
-      - name: debug
-        image: alpine
-        command: ["ash","-c","while true; do sleep 15s; done"]
-        imagePullPolicy: Always
-        volumeMounts:
-        - mountPath: /shared
-          name: {{ template "ibm-blockchain-shared.name" . }}-pvc
-        - mountPath: /home
-          name: composer-credentials
       volumes:
       - name: {{ template "ibm-blockchain-shared.name" . }}-pvc
         persistentVolumeClaim:
@@ -37,3 +27,19 @@ spec:
       - name: composer-credentials
         hostPath:
           path: /home/composer
+      containers:
+      - name: debug
+        image: busybox:1.28.4
+        command: 
+        - sh
+        - -c
+        - |
+          while true; do
+            sleep 15s
+          done
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /shared
+          name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+        - mountPath: /home
+          name: composer-credentials

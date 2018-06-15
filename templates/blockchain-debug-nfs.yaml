@@ -24,9 +24,9 @@ spec:
       - name: {{ template "ibm-blockchain-shared.name" . }}-pvc
         persistentVolumeClaim:
           claimName: {{ template "ibm-blockchain-shared.name" . }}-pvc
-      - name: composer-credentials
-        hostPath:
-          path: /home/composer
+      - name: {{ template "ibm-blockchain-composer.name" . }}-pvc
+        persistentVolumeClaim:
+          claimName: {{ template "ibm-blockchain-composer.name" . }}-pvc
       containers:
       - name: debug
         image: busybox:1.28.4
@@ -41,5 +41,5 @@ spec:
         volumeMounts:
         - mountPath: /shared
           name: {{ template "ibm-blockchain-shared.name" . }}-pvc
-        - mountPath: /home
-          name: composer-credentials
+        - mountPath: /home/composer/.composer
+          name: {{ template "ibm-blockchain-composer.name" . }}-pvc

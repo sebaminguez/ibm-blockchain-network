@@ -1,0 +1,28 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: composer-rest-server
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: composer-rest-server
+    spec:
+      volumes:
+      - name: {{ template "ibm-blockchain-composer.name" . }}-pvc
+        persistentVolumeClaim:
+          claimName: {{ template "ibm-blockchain-composer.name" . }}-pvc
+      containers:
+      - name: composer-rest-server
+        image: {{ .Values.composer.restServerImage }}
+        imagePullPolicy: {{ .Values.composer.pullPolicy }}
+        env:
+        - name: COMPOSER_CARD
+          value: {{ .Values.composer.card }}
+        - name: COMPOSER_NAMESPACES
+          value: never
+        volumeMounts:
+        - name: {{ template "ibm-blockchain-composer.name" . }}-pvc
+          mountPath: /home/composer/.composer

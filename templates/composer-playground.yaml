@@ -28,6 +28,7 @@ spec:
             echo Waiting for Composer card import to complete
             sleep 5s
           done
+          echo Composer card import completed
         volumeMounts:
         - name: {{ template "ibm-blockchain-shared.name" . }}-pvc
           mountPath: /shared

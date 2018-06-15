@@ -38,6 +38,7 @@ spec:
             echo Waiting for bootstrap
             sleep 5s
           done
+          echo bootstrap completed
         volumeMounts:
         - mountPath: /shared
           name: {{ template "ibm-blockchain-shared.name" . }}-pvc

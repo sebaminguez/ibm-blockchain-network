@@ -42,16 +42,18 @@ persistence:
   storageClass: ""
 
 fabric:
-  toolsImage: ibmblockchain/fabric-tools:1.0.3
-  ordererImage: ibmblockchain/fabric-orderer:1.0.3
-  caImage: ibmblockchain/fabric-ca:1.0.3
-  peerImage: ibmblockchain/fabric-peer:1.0.3
+  toolsImage: hyperledger/fabric-tools:x86_64-1.0.3
+  ordererImage: hyperledger/fabric-orderer:x86_64-1.0.3
+  caImage: hyperledger/fabric-ca:x86_64-1.0.3
+  peerImage: hyperledger/fabric-peer:x86_64-1.0.3
   pullPolicy: IfNotPresent
 
 composer:
-  cliImage: ibmblockchain/composer-cli:0.16.2
-  playgroundImage: ibmblockchain/composer-playground:0.16.2
+  cliImage: hyperledger/composer-cli:0.16.2
+  playgroundImage: hyperledger/composer-playground:0.16.2
+  restServerImage: hyperledger/composer-rest-server:0.16.2
   pullPolicy: IfNotPresent
+  card: PeerAdmin@hlfv1
 
 # Added for NFS Service on Kubernetes Engine
 nfs:

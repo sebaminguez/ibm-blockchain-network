@@ -20,6 +20,23 @@ spec:
   - name: {{ template "ibm-blockchain-composer.name" . }}-pvc
     persistentVolumeClaim:
       claimName: {{ template "ibm-blockchain-composer.name" . }}-pvc
+  - name: sampleconfig
+    emptyDir: {}
+  initContainers:
+  - name: init-service
+    image: gcr.io/cloud-builders/git
+    command:
+    - sh # override the Builder's default 'git' entrypoint
+    - -c
+    - |
+      git init
+      git remote add -f origin https://github.com/IBM-Blockchain/ibm-container-service
+      git config core.sparseCheckout true
+      echo "/sampleconfig" >> .git/info/sparse-checkout
+      git pull origin master
+    volumeMounts:
+    - mountPath: /sampleconfig
+      name: sampleconfig
   containers:
   - name: cryptogen
     image: {{ .Values.fabric.toolsImage }}
@@ -41,6 +58,8 @@ spec:
     volumeMounts:
     - mountPath: /shared
       name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+    - mountPath: /sampleconfig
+      name: sampleconfig
   - name: configtxgen
     image: {{ .Values.fabric.toolsImage }}
     imagePullPolicy: {{ .Values.fabric.pullPolicy }}
@@ -82,6 +101,8 @@ spec:
     volumeMounts:
     - mountPath: /shared
       name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+    - mountPath: /sampleconfig
+      name: sampleconfig
   - name: bootstrap
     image: {{ .Values.fabric.toolsImage }}
     imagePullPolicy: {{ .Values.fabric.pullPolicy }}
@@ -110,3 +131,5 @@ spec:
       name: {{ template "ibm-blockchain-shared.name" . }}-pvc
     - mountPath: /home/composer/.composer
       name: {{ template "ibm-blockchain-composer.name" . }}-pvc
+    - mountPath: /sampleconfig
+      name: sampleconfig

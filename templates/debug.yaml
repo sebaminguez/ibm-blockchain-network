@@ -2,9 +2,9 @@
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
-  name: {{ template "ibm-blockchain-network.name" . }}-debug-nfs
+  name: {{ template "network.name" . }}-debug
   labels:
-    app: {{ template "ibm-blockchain-network.name" . }}
+    app: {{ template "network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -12,21 +12,21 @@ spec:
   replicas: 1
   template:
     metadata:
-      name: {{ template "ibm-blockchain-network.name" . }}-org1peer1
+      name: {{ template "network.name" . }}-debug
       labels:
-        app: {{ template "ibm-blockchain-network.name" . }}
+        app: {{ template "network.name" . }}
         chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
-        name: {{ template "ibm-blockchain-network.name" . }}-debug-nfs
+        role: {{ template "network.name" . }}-debug
     spec:
       volumes:
-      - name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+      - name: {{ template "shared.name" . }}-pvc
         persistentVolumeClaim:
-          claimName: {{ template "ibm-blockchain-shared.name" . }}-pvc
-      - name: {{ template "ibm-blockchain-composer.name" . }}-pvc
+          claimName: {{ template "shared.name" . }}-pvc
+      - name: {{ template "composer.name" . }}-pvc
         persistentVolumeClaim:
-          claimName: {{ template "ibm-blockchain-composer.name" . }}-pvc
+          claimName: {{ template "composer.name" . }}-pvc
       containers:
       - name: debug
         image: busybox:1.28.4
@@ -40,6 +40,6 @@ spec:
         imagePullPolicy: Always
         volumeMounts:
         - mountPath: /shared
-          name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+          name: {{ template "shared.name" . }}-pvc
         - mountPath: /home/composer/.composer
-          name: {{ template "ibm-blockchain-composer.name" . }}-pvc
+          name: {{ template "composer.name" . }}-pvc

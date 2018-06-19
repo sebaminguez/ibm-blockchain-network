@@ -2,16 +2,21 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: chaincodeinstantiate
+  name: {{ template "network.name" . }}-cc-instantiate
+  labels:
+    app: {{ template "network.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}  
 spec:
   restartPolicy: "Never"
   volumes:
-  - name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+  - name: {{ template "shared.name" . }}-pvc
     persistentVolumeClaim:
-      claimName: {{ template "ibm-blockchain-shared.name" . }}-pvc
+      claimName: {{ template "shared.name" . }}-pvc
 
   containers:
-  - name: chaincodeinstantiate
+  - name: chaincode-instantiate
     image: {{ .Values.fabric.toolsImage }}
     imagePullPolicy: {{ .Values.fabric.pullPolicy }}
     command:
@@ -24,7 +29,7 @@ spec:
       done
 
       peer chaincode instantiate \
-      --orderer blockchain-orderer:31010 \
+      --orderer ${ORDERER_URL}:31010 \
       --channelID ${CHANNEL_NAME} \
       --name ${CHAINCODE_NAME} \
       --version ${CHAINCODE_VERSION} \
@@ -47,9 +52,11 @@ spec:
     - name: CORE_PEER_LOCALMSPID
       value: Org1MSP
     - name: CORE_PEER_ADDRESS
-      value: {{ template "ibm-blockchain-network.name" . }}-org1peer1:30110
+      value: {{ template "network.name" . }}-org1peer1:30110
+    - name: ORDERER_URL
+      value: {{ template "network.name" . }}-orderer:31010
     - name: GODEBUG
       value: "netdns=go"
     volumeMounts:
     - mountPath: /shared
-      name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+      name: {{ template "shared.name" . }}-pvc

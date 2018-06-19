@@ -2,9 +2,9 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: {{ template "ibm-blockchain-shared.name" . }}-pv
+  name: {{ template "shared.name" . }}-pv
   labels:
-    app: {{ template "ibm-blockchain-network.name" . }}
+    app: {{ template "network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -22,9 +22,9 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+  name: {{ template "shared.name" . }}-pvc
   labels:
-    app: {{ template "ibm-blockchain-network.name" . }}
+    app: {{ template "network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -37,15 +37,15 @@ spec:
       storage: 1Gi
   select:
     matchLabels:
-      name: {{ template "ibm-blockchain-shared.name" . }}-pv
+      name: {{ template "shared.name" . }}-pv
 ...
 ---
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: {{ template "ibm-blockchain-composer.name" . }}-pv
+  name: {{ template "composer.name" . }}-pv
   labels:
-    app: {{ template "ibm-blockchain-network.name" . }}
+    app: {{ template "network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -63,9 +63,9 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ template "ibm-blockchain-composer.name" . }}-pvc
+  name: {{ template "composer.name" . }}-pvc
   labels:
-    app: {{ template "ibm-blockchain-network.name" . }}
+    app: {{ template "network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -78,5 +78,5 @@ spec:
       storage: 1Gi
   select:
     matchLabels:
-      name: {{ template "ibm-blockchain-composer.name" . }}-pv
+      name: {{ template "composer.name" . }}-pv
 ...

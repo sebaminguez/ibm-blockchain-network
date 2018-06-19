@@ -2,9 +2,9 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{ template "ibm-blockchain-network.name" . }}-orderer
+  name: {{ template "network.name" . }}-orderer
   labels:
-    app: {{ template "ibm-blockchain-network.name" . }}
+    app: {{ template "network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -12,18 +12,18 @@ spec:
   replicas: 1
   template:
     metadata:
-      name: {{ template "ibm-blockchain-network.name" . }}-orderer
+      name: {{ template "network.name" . }}-orderer
       labels:
-        app: {{ template "ibm-blockchain-network.name" . }}
+        app: {{ template "network.name" . }}
         chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
-        name: {{ template "ibm-blockchain-network.name" . }}-orderer
+        role: {{ template "network.name" . }}-orderer
     spec:
       volumes:
-      - name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+      - name: {{ template "shared.name" . }}-pvc
         persistentVolumeClaim:
-         claimName: {{ template "ibm-blockchain-shared.name" . }}-pvc
+         claimName: {{ template "shared.name" . }}-pvc
       containers:
       - name: orderer
         image: {{ .Values.fabric.ordererImage }}
@@ -77,5 +77,29 @@ spec:
           value: "netdns=go"
         volumeMounts:
         - mountPath: /shared
-          name: {{ template "ibm-blockchain-shared.name" . }}-pvc
-
+          name: {{ template "shared.name" . }}-pvc
+...
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "network.name" . }}-orderer
+  labels:
+    app: {{ template "network.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: NodePort
+  selector:
+    app: {{ template "network.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    role: {{ template "network.name" . }}-orderer
+  ports:
+  - protocol: TCP
+    port: 31010
+    nodePort: 31010
+    name: grpc
+...

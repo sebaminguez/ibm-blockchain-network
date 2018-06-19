@@ -1,0 +1,73 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "network.name" . }}-marbles
+  labels:
+    app: {{ template "network.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}    
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: {{ template "network.name" . }}-marbles
+      labels:
+        app: {{ template "network.name" . }}
+        chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}    
+        role: {{ template "network.name" . }}-marbles
+    spec:
+      volumes:
+      - name: {{ template "shared.name" . }}-pvc
+        persistentVolumeClaim:
+          claimName: {{ template "shared.name" . }}-pvc
+      containers:
+      - name: marbles-demo
+        image: {{ .Values.marbles.image }}
+        imagePullPolicy: {{ .Values.marbles.pullPolicy }}
+        command:
+        - sh
+        - -c
+        - |
+          cp \
+            /shared/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/key.pem \
+            /app/config/org1_admin_key.pem
+          cp \
+            /shared/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem \
+            /app/config/org1_admin_cert.pem
+          node scripts/install_chaincode.js marbles_cs.json
+          sleep 10
+          node scripts/instantiate_chaincode.js marbles_cs.json
+          sleep 10
+          gulp marbles_cs
+        volumeMounts:
+        - mountPath: /shared
+          name: {{ template "shared.name" . }}-pvc
+...
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "network.name" . }}-marbles
+  labels:
+    app: {{ template "network.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}  
+spec:
+  type: NodePort
+  selector:
+    app: {{ template "network.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}  
+    role: {{ template "network.name" . }}-marbles
+  ports:
+  - protocol: TCP
+    port: 32001
+    nodePort: 32001
+    name: http
+...          

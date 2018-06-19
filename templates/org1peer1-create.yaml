@@ -2,9 +2,9 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{ template "ibm-blockchain-network.name" . }}-org1peer1
+  name: {{ template "network.name" . }}-org1peer1
   labels:
-    app: {{ template "ibm-blockchain-network.name" . }}
+    app: {{ template "network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -12,18 +12,18 @@ spec:
   replicas: 1
   template:
     metadata:
-      name: {{ template "ibm-blockchain-network.name" . }}-org1peer1
+      name: {{ template "network.name" . }}-org1peer1
       labels:
-        app: {{ template "ibm-blockchain-network.name" . }}
+        app: {{ template "network.name" . }}
         chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
-        name: {{ template "ibm-blockchain-network.name" . }}-org1peer1
+        role: {{ template "network.name" . }}-org1peer1
     spec:
       volumes:
-      - name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+      - name: {{ template "shared.name" . }}-pvc
         persistentVolumeClaim:
-         claimName: {{ template "ibm-blockchain-shared.name" . }}-pvc
+         claimName: {{ template "shared.name" . }}-pvc
       - name: dockersocket
         hostPath:
           path: /var/run/docker.sock
@@ -41,7 +41,7 @@ spec:
           echo bootstrap completed
         volumeMounts:
         - mountPath: /shared
-          name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+          name: {{ template "shared.name" . }}-pvc
       containers:
       - name: org1peer1
         image: {{ .Values.fabric.peerImage }}
@@ -58,13 +58,13 @@ spec:
         - name: CORE_PEER_NETWORKID
           value: nid1
         - name: CORE_PEER_ADDRESS
-          value: {{ template "ibm-blockchain-network.name" . }}-org1peer1:30110
+          value: {{ template "network.name" . }}-org1peer1:30110
         - name: CORE_PEER_LISTENADDRESS
           value: 0.0.0.0:30110
         - name: CORE_PEER_EVENTS_ADDRESS
           value: 0.0.0.0:30111
         - name: CORE_PEER_GOSSIP_BOOTSTRAP
-          value: {{ template "ibm-blockchain-network.name" . }}-org1peer1:30110
+          value: {{ template "network.name" . }}-org1peer1:30110
         - name: CORE_PEER_GOSSIP_ORGLEADER	
           value: "true"
         - name: CORE_PEER_GOSSIP_SKIPHANDSHAKE	
@@ -110,12 +110,42 @@ spec:
         - name: FABRIC_CFG_PATH
           value: /etc/hyperledger/fabric/
         - name: ORDERER_URL
-          value: {{ template "ibm-blockchain-network.name" . }}-orderer:31010
+          value: {{ template "network.name" . }}-orderer:31010
         - name: GODEBUG
           value: "netdns=go"
         volumeMounts:
         - mountPath: /shared
-          name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+          name: {{ template "shared.name" . }}-pvc
         - mountPath: /host/var/run/docker.sock
           name: dockersocket
-
+...
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "network.name" . }}-org1peer1
+  labels:
+    app: {{ template "network.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: NodePort
+  selector:
+    app: {{ template "network.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    role: {{ template "network.name" . }}-org1peer1
+  ports:
+  - protocol: TCP
+    port: 30110
+    nodePort: 30110
+    targetPort: 30110
+    name: grpc
+  - protocol: TCP
+    port: 30111
+    nodePort: 30111
+    targetPort: 30111
+    name: events
+...

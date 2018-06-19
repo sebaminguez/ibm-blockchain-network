@@ -2,9 +2,9 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{ template "ibm-blockchain-network.name" . }}-ca
+  name: {{ template "network.name" . }}-ca
   labels:
-    app: {{ template "ibm-blockchain-network.name" . }}
+    app: {{ template "network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -12,18 +12,18 @@ spec:
   replicas: 1
   template:
     metadata:
-      name: {{ template "ibm-blockchain-network.name" . }}-ca
+      name: {{ template "network.name" . }}-ca
       labels:
-        app: {{ template "ibm-blockchain-network.name" . }}
+        app: {{ template "network.name" . }}
         chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
-        name: {{ template "ibm-blockchain-network.name" . }}-ca
+        role: {{ template "network.name" . }}-ca
     spec:
       volumes:
-      - name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+      - name: {{ template "shared.name" . }}-pvc
         persistentVolumeClaim:
-         claimName: {{ template "ibm-blockchain-shared.name" . }}-pvc
+         claimName: {{ template "shared.name" . }}-pvc
       containers:
       - name: ca
         image: {{ .Values.fabric.caImage }}
@@ -46,7 +46,7 @@ spec:
         - name: FABRIC_CA_SERVER_CA_CERTFILE
           value: /shared/crypto-config/ordererOrganizations/example.com/ca/ca.example.com-cert.pem
         - name: FABRIC_CA_SERVER_CA_KEYFILE
-          value: /mnt/crypto-config/ordererOrganizations/example.com/ca/948030ba41c19d662d767eb6f0d8196ff95c87f8f838fc4b8951f886357d82e8_sk
+          value: /mnt/crypto-config/ordererOrganizations/example.com/ca/key.pem #948030ba41c19d662d767eb6f0d8196ff95c87f8f838fc4b8951f886357d82e8_sk
         - name: FABRIC_CA_SERVER_DEBUG
           value: "true"
         - name: FABRIC_CA_SERVER_TLS_ENABLED
@@ -59,4 +59,29 @@ spec:
           value: "netdns=go"
         volumeMounts:
         - mountPath: /shared
-          name: {{ template "ibm-blockchain-shared.name" . }}-pvc
+          name: {{ template "shared.name" . }}-pvc
+...
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "network.name" . }}-ca
+  labels:
+    app: {{ template "network.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: NodePort
+  selector:
+    app: {{ template "network.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    role: {{ template "network.name" . }}-ca
+  ports:
+  - protocol: TCP
+    port: 7054
+    nodePort: 30000
+    name: grpc
+...

@@ -47,13 +47,6 @@ marbles:
   image: dhyeyibm/container-service-marbles:1.0.1
   pullPolicy: IfNotPresent
 
-# Added for NFS Service on Kubernetes Engine
-nfs:
-  service:
-    name: nfs
-    namespace: default
-  path: "/"
-
 # Added for Channel
 channel:
   name: channel1

@@ -11,15 +11,15 @@ metadata:
 spec:
   restartPolicy: "Never"
   volumes:
-  - name: {{ template "shared.name" . }}-pvc
+  - name: {{ template "network.name" . }}-shared-pvc
     persistentVolumeClaim:
-     claimName: {{ template "shared.name" . }}-pvc
+     claimName: {{ template "network.name" . }}-shared-pvc
   - name: dockersocket
     hostPath:
       path: /var/run/docker.sock
-  - name: {{ template "composer.name" . }}-pvc
+  - name: {{ template "network.name" . }}-composer-pvc
     persistentVolumeClaim:
-      claimName: {{ template "composer.name" . }}-pvc
+      claimName: {{ template "network.name" . }}-composer-pvc
   - name: sampleconfig
     emptyDir: {}
   initContainers:
@@ -57,7 +57,7 @@ spec:
       touch /shared/status_cryptogen_complete
     volumeMounts:
     - mountPath: /shared
-      name: {{ template "shared.name" . }}-pvc
+      name: {{ template "network.name" . }}-shared-pvc
     - mountPath: /sampleconfig
       name: sampleconfig
   - name: configtxgen
@@ -100,7 +100,7 @@ spec:
     #   value: "netdns=go"
     volumeMounts:
     - mountPath: /shared
-      name: {{ template "shared.name" . }}-pvc
+      name: {{ template "network.name" . }}-shared-pvc
     - mountPath: /sampleconfig
       name: sampleconfig
   - name: bootstrap
@@ -128,8 +128,8 @@ spec:
         echo 'Done with bootstrapping'
     volumeMounts:
     - mountPath: /shared
-      name: {{ template "shared.name" . }}-pvc
+      name: {{ template "network.name" . }}-shared-pvc
     - mountPath: /home/composer/.composer
-      name: {{ template "composer.name" . }}-pvc
+      name: {{ template "network.name" . }}-composer-pvc
     - mountPath: /sampleconfig
       name: sampleconfig

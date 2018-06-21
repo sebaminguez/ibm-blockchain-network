@@ -2,7 +2,7 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: {{ template "shared.name" . }}-pv
+  name: {{ template "network.name" . }}-shared-pv
   labels:
     app: {{ template "network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
@@ -15,14 +15,14 @@ spec:
   accessModes:
     - ReadWriteMany
   nfs:
-    server: {{ .Values.nfs.service.name }}.{{ .Values.nfs.service.namespace }}.svc.cluster.local
-    path: {{ .Values.nfs.path }}
+    server: {{ template "network.name" . }}-nfs.{{ .Release.Namespace }}.svc.cluster.local #{{ .Values.nfs.service.name }}.{{ .Values.nfs.service.namespace }}.svc.cluster.local
+    path: "/"
 ...
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ template "shared.name" . }}-pvc
+  name: {{ template "network.name" . }}-shared-pvc
   labels:
     app: {{ template "network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
@@ -37,13 +37,13 @@ spec:
       storage: 1Gi
   select:
     matchLabels:
-      name: {{ template "shared.name" . }}-pv
+      name: {{ template "network.name" . }}-shared-pv
 ...
 ---
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: {{ template "composer.name" . }}-pv
+  name: {{ template "network.name" . }}-composer-pv
   labels:
     app: {{ template "network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
@@ -56,14 +56,14 @@ spec:
   accessModes:
     - ReadWriteMany
   nfs:
-    server: {{ .Values.nfs.service.name }}.{{ .Values.nfs.service.namespace }}.svc.cluster.local
-    path: {{ .Values.nfs.path }}
+    server: {{ template "network.name" . }}-nfs.{{ .Release.Namespace }}.svc.cluster.local #{{ .Values.nfs.service.name }}.{{ .Values.nfs.service.namespace }}.svc.cluster.local
+    path: "/"
 ...
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ template "composer.name" . }}-pvc
+  name: {{ template "network.name" . }}-composer-pvc
   labels:
     app: {{ template "network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
@@ -78,5 +78,5 @@ spec:
       storage: 1Gi
   select:
     matchLabels:
-      name: {{ template "composer.name" . }}-pv
+      name: {{ template "network.name" . }}-shared-pv
 ...

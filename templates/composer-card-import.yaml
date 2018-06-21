@@ -7,16 +7,17 @@ metadata:
     app: {{ template "network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}  
+    heritage: {{ .Release.Service }}
+    role: composer-card-import
 spec:
   restartPolicy: "Never"
   volumes:
-  - name: {{ template "composer.name" . }}-pvc
+  - name: {{ template "network.name" . }}-composer-pvc
     persistentVolumeClaim:
-      claimName: {{ template "composer.name" . }}-pvc
-  - name: {{ template "shared.name" . }}-pvc
+      claimName: {{ template "network.name" . }}-composer-pvc
+  - name: {{ template "network.name" . }}-shared-pvc
     persistentVolumeClaim:
-      claimName: {{ template "shared.name" . }}-pvc
+      claimName: {{ template "network.name" . }}-shared-pvc
   initContainers:
   - name: init-service
     image: busybox:1.28.4
@@ -30,7 +31,7 @@ spec:
       done
       echo bootstrap completed
     volumeMounts:
-    - name: {{ template "shared.name" . }}-pvc
+    - name: {{ template "network.name" . }}-shared-pvc
       mountPath: /shared
   containers:
   - name: composer-card-import
@@ -43,8 +44,8 @@ spec:
       #echo $K8S_PROFILE > connection.json
       echo $K8S_PROFILE | \
       sed \
-      --expression="s|%ORDERER%|${ORDERER}|g" \
-      --expression="s|%CA%|${CA}|g" \
+      --expression="s|%ORDERER_URL%|${ORDERER_URL}|g" \
+      --expression="s|%CA_URL%|${CA_URL}|g" \
       --expression="s|%ORG1PEER1_REQUEST_URL%|${ORG1PEER1_REQUEST_URL}|g" \
       --expression="s|%ORG1PEER1_EVENT_URL%|${ORG1PEER1_EVENT_URL}|g" > connection.json
       
@@ -94,8 +95,8 @@ spec:
     - name: ORG1PEER1_EVENT_URL
       value: {{ template "network.name" .}}-org1peer1:30111
     volumeMounts:
-    - name: {{ template "composer.name" . }}-pvc
+    - name: {{ template "network.name" . }}-composer-pvc
       mountPath: /home/composer/.composer
-    - name: {{ template "shared.name" . }}-pvc
+    - name: {{ template "network.name" . }}-shared-pvc
       mountPath: /shared
 ...

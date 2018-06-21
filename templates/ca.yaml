@@ -18,12 +18,12 @@ spec:
         chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
-        role: {{ template "network.name" . }}-ca
+        role: ca
     spec:
       volumes:
-      - name: {{ template "shared.name" . }}-pvc
+      - name: {{ template "network.name" . }}-shared-pvc
         persistentVolumeClaim:
-         claimName: {{ template "shared.name" . }}-pvc
+         claimName: {{ template "network.name" . }}-shared-pvc
       containers:
       - name: ca
         image: {{ .Values.fabric.caImage }}
@@ -59,7 +59,7 @@ spec:
           value: "netdns=go"
         volumeMounts:
         - mountPath: /shared
-          name: {{ template "shared.name" . }}-pvc
+          name: {{ template "network.name" . }}-shared-pvc
 ...
 ---
 apiVersion: v1
@@ -78,10 +78,10 @@ spec:
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    role: {{ template "network.name" . }}-ca
+    role: ca
   ports:
   - protocol: TCP
     port: 7054
-    nodePort: 30000
+    #nodePort: 30000
     name: grpc
 ...

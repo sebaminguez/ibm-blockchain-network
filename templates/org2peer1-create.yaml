@@ -18,12 +18,12 @@ spec:
         chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
-        role: {{ template "network.name" . }}-org2peer1
+        role: org2peer1
     spec:
       volumes:
-      - name: {{ template "shared.name" . }}-pvc
+      - name: {{ template "network.name" . }}-shared-pvc
         persistentVolumeClaim:
-         claimName: {{ template "shared.name" . }}-pvc
+         claimName: {{ template "network.name" . }}-shared-pvc
       - name: dockersocket
         hostPath:
           path: /var/run/docker.sock
@@ -41,7 +41,7 @@ spec:
           echo bootstrap completed
         volumeMounts:
         - mountPath: /shared
-          name: {{ template "shared.name" . }}-pvc
+          name: {{ template "network.name" . }}-shared-pvc
       containers:
       - name: org2peer1
         image: {{ .Values.fabric.peerImage }}
@@ -115,7 +115,7 @@ spec:
           value: "netdns=go"
         volumeMounts:
         - mountPath: /shared
-          name: {{ template "shared.name" . }}-pvc
+          name: {{ template "network.name" . }}-shared-pvc
         - mountPath: /host/var/run/docker.sock
           name: dockersocket
 ...
@@ -136,16 +136,16 @@ spec:
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    role: {{ template "network.name" . }}-org2peer1
+    role: org2peer1
   ports:
   - protocol: TCP
     port: 30210
-    nodePort: 30210
+    #nodePort: 30210
     targetPort: 30210
     name: grpc
   - protocol: TCP
     port: 30211
-    nodePort: 30211
+    #nodePort: 30211
     targetPort: 30211
     name: events
 ...

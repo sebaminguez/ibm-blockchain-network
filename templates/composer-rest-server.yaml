@@ -18,12 +18,12 @@ spec:
         chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}  
-        role: {{ template "network.name" . }}-composer-rest-server
+        role: composer-rest-server
     spec:
       volumes:
-      - name: {{ template "composer.name" . }}-pvc
+      - name: {{ template "network.name" . }}-composer-pvc
         persistentVolumeClaim:
-          claimName: {{ template "composer.name" . }}-pvc
+          claimName: {{ template "network.name" . }}-composer-pvc
       containers:
       - name: composer-rest-server
         image: {{ .Values.composer.restServerImage }}
@@ -34,7 +34,7 @@ spec:
         - name: COMPOSER_NAMESPACES
           value: never
         volumeMounts:
-        - name: {{ template "composer.name" . }}-pvc
+        - name: {{ template "network.name" . }}-composer-pvc
           mountPath: /home/composer/.composer
 ...
 ---
@@ -55,10 +55,10 @@ spec:
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}    
-    role: {{ template "network.name" . }}-composer-rest-server
+    role: composer-rest-server
   ports:
   - protocol: TCP
     port: 3000
-    nodePort: 31090
+    #nodePort: 31090
     name: http
 ...

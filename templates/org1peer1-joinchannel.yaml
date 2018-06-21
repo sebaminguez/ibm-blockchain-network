@@ -7,13 +7,14 @@ metadata:
     app: {{ template "network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}  
+    heritage: {{ .Release.Service }}
+    role: org1peer1-joinchannel
 spec:
   restartPolicy: "Never"
   volumes:
-  - name: {{ template "shared.name" . }}-pvc
+  - name: {{ template "network.name" . }}-shared-pvc
     persistentVolumeClaim:
-      claimName: {{ template "shared.name" . }}-pvc
+      claimName: {{ template "network.name" . }}-shared-pvc
 
   containers:
   - name: joinchannel
@@ -57,5 +58,5 @@ spec:
       value: "netdns=go"
     volumeMounts:
     - mountPath: /shared
-      name: {{ template "shared.name" . }}-pvc
+      name: {{ template "network.name" . }}-shared-pvc
 ...

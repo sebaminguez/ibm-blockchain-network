@@ -7,7 +7,7 @@ metadata:
     app: {{ template "network.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}  
+    heritage: {{ .Release.Service }}
 spec:
   replicas: 1
   template:
@@ -18,15 +18,15 @@ spec:
         chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
-        role: {{ template "network.name" . }}-composer-playground
+        role: composer-playground
     spec:
       volumes:
-      - name: {{ template "shared.name" . }}-pvc
+      - name: {{ template "network.name" . }}-shared-pvc
         persistentVolumeClaim:
-          claimName: {{ template "shared.name" . }}-pvc
-      - name: {{ template "composer.name" . }}-pvc
+          claimName: {{ template "network.name" . }}-shared-pvc
+      - name: {{ template "network.name" . }}-composer-pvc
         persistentVolumeClaim:
-          claimName: {{ template "composer.name" . }}-pvc
+          claimName: {{ template "network.name" . }}-composer-pvc
       initContainers:
       - name: init-service
         image: busybox:1.28.4
@@ -40,16 +40,16 @@ spec:
           done
           echo Composer card import completed
         volumeMounts:
-        - name: {{ template "shared.name" . }}-pvc
+        - name: {{ template "network.name" . }}-shared-pvc
           mountPath: /shared
-        - name: {{ template "composer.name" . }}-pvc
+        - name: {{ template "network.name" . }}-composer-pvc
           mountPath: /home/composer/.composer
       containers:
       - name: composer-playground
         image: {{ .Values.composer.playgroundImage }}
         imagePullPolicy: {{ .Values.composer.pullPolicy }}
         volumeMounts:
-        - name: {{ template "composer.name" . }}-pvc
+        - name: {{ template "network.name" . }}-composer-pvc
           mountPath: /home/composer/.composer
 ...
 ---
@@ -69,10 +69,10 @@ spec:
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}  
-    role: {{ template "network.name" . }}-composer-playground
+    role: composer-playground
   ports:
   - protocol: TCP
     port: 8080
-    nodePort: 31080
+    #nodePort: 31080
     name: http
 ...

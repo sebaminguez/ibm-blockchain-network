@@ -18,15 +18,15 @@ spec:
         chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
-        role: {{ template "network.name" . }}-debug
+        role: debug
     spec:
       volumes:
-      - name: {{ template "shared.name" . }}-pvc
+      - name: {{ template "network.name" . }}-shared-pvc
         persistentVolumeClaim:
-          claimName: {{ template "shared.name" . }}-pvc
-      - name: {{ template "composer.name" . }}-pvc
+          claimName: {{ template "network.name" . }}-shared-pvc
+      - name: {{ template "network.name" . }}-composer-pvc
         persistentVolumeClaim:
-          claimName: {{ template "composer.name" . }}-pvc
+          claimName: {{ template "network.name" . }}-composer-pvc
       containers:
       - name: debug
         image: busybox:1.28.4
@@ -40,6 +40,6 @@ spec:
         imagePullPolicy: Always
         volumeMounts:
         - mountPath: /shared
-          name: {{ template "shared.name" . }}-pvc
+          name: {{ template "network.name" . }}-shared-pvc
         - mountPath: /home/composer/.composer
-          name: {{ template "composer.name" . }}-pvc
+          name: {{ template "network.name" . }}-composer-pvc

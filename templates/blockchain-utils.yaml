@@ -4,7 +4,7 @@ kind: Pod
 metadata:
   name: {{ template "network.name" . }}-utils
   labels:
-    app: {{ template "network.name" . }}
+    app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -67,20 +67,21 @@ spec:
     - sh
     - -c
     - |
-      sleep 2s
       while [ ! -f /shared/status_cryptogen_complete ]; do
         echo Waiting for cryptogen
         sleep 5s
       done
-      echo 'sample config is =>' &&
-      ls /sampleconfig &&
-      cp /sampleconfig/configtx.yaml /shared/configtx.yaml &&
-      echo 'shared after copy is =>' &&
-      ls /shared &&
-      cd /shared/ &&
-      configtxgen -profile TwoOrgsOrdererGenesis -outputBlock orderer.block &&
-      find /shared -type d | xargs chmod a+rx &&
-      find /shared -type f | xargs chmod a+r &&
+
+      #cp /sampleconfig/configtx.yaml /shared/configtx.yaml
+      cat /sampleconfig/configtx.yaml | sed --expression="s|blockchain-|${BLOCKCHAIN_DASH}-|g" > /shared/configtx.yaml
+      
+      cd /shared/
+
+      configtxgen -profile TwoOrgsOrdererGenesis -outputBlock orderer.block
+
+      find /shared -type d | xargs chmod a+rx
+      find /shared -type f | xargs chmod a+r
+
       touch /shared/status_configtxgen_complete &&
       rm -f /shared/status_cryptogen_complete
     env:
@@ -96,6 +97,8 @@ spec:
        value: {{ template "network.name" . }}-orderer:31010
      - name: FABRIC_CFG_PATH
        value: /shared
+     - name: BLOCKCHAIN_DASH
+       value: {{ template "network.name" . }}
     # - name: GODEBUG
     #   value: "netdns=go"
     volumeMounts:

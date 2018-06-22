@@ -4,11 +4,11 @@ kind: Pod
 metadata:
   name: {{ template "network.name" . }}-org1peer1-cc-install
   labels:
-    app: {{ template "network.name" . }}
+    app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    role: org1peer1-cc-install
+    component: org1peer1-cc-install
 spec:
   restartPolicy: "Never"
   volumes:

@@ -4,7 +4,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ template "network.name" . }}-nfs
   labels:
-    app: {{ template "network.name" . }}
+    app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -22,7 +22,7 @@ kind: Deployment
 metadata:
   name: {{ template "network.name" . }}-nfs
   labels:
-    app: {{ template "network.name" . }}
+    app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -32,11 +32,11 @@ spec:
     metadata:
       name: {{ template "network.name" . }}-nfs
       labels:
-        app: {{ template "network.name" . }}
+        app: {{ .Chart.Name }}
         chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
-        role: nfs
+        component: nfs
     spec:
       containers:
       - name: nfs
@@ -65,17 +65,17 @@ kind: Service
 metadata:
   name: {{ template "network.name" . }}-nfs
   labels:
-    app: {{ template "network.name" . }}
+    app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   selector:
-    app: {{ template "network.name" . }}
+    app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    role: nfs
+    component: nfs
   ports:
     - name: nfs
       port: 2049

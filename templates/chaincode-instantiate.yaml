@@ -4,11 +4,11 @@ kind: Pod
 metadata:
   name: {{ template "network.name" . }}-cc-instantiate
   labels:
-    app: {{ template "network.name" . }}
+    app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    role: cc-instantiate
+    component: cc-instantiate
 spec:
   restartPolicy: "Never"
   volumes:
@@ -28,13 +28,13 @@ spec:
         echo Waiting for Chaincode installs on org1peer1 and org2peer1 to complete
         sleep 5s
       done
-
+      
       peer chaincode instantiate \
-      --orderer ${ORDERER_URL}:31010 \
+      --orderer ${ORDERER_URL} \
       --channelID ${CHANNEL_NAME} \
       --name ${CHAINCODE_NAME} \
       --version ${CHAINCODE_VERSION} \
-      --ctor '{\"Args\":[\"init\",\"a\",\"100\",\"b\",\"200\"]}'
+      --ctor '{"Args":["init","a","100","b","200"]}'
 
       rm /shared/status_chaincode_install_org1peer1_complete &&
       rm /shared/status_chaincode_install_org2peer1_complete &&

@@ -4,7 +4,7 @@ apiVersion: extensions/v1beta1
 metadata:
   name: {{ template "network.name" . }}-debug
   labels:
-    app: {{ template "network.name" . }}
+    app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -14,11 +14,11 @@ spec:
     metadata:
       name: {{ template "network.name" . }}-debug
       labels:
-        app: {{ template "network.name" . }}
+        app: {{ .Chart.Name }}
         chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
-        role: debug
+        component: debug
     spec:
       volumes:
       - name: {{ template "network.name" . }}-shared-pvc

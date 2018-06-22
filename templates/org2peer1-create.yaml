@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: {{ template "network.name" . }}-org2peer1
   labels:
-    app: {{ template "network.name" . }}
+    app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -14,11 +14,11 @@ spec:
     metadata:
       name: {{ template "network.name" . }}-org2peer1
       labels:
-        app: {{ template "network.name" . }}
+        app: {{ .Chart.Name }}
         chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
-        role: org2peer1
+        component: org2peer1
     spec:
       volumes:
       - name: {{ template "network.name" . }}-shared-pvc
@@ -125,18 +125,18 @@ kind: Service
 metadata:
   name: {{ template "network.name" . }}-org2peer1
   labels:
-    app: {{ template "network.name" . }}
+    app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   type: NodePort
   selector:
-    app: {{ template "network.name" . }}
+    app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    role: org2peer1
+    component: org2peer1
   ports:
   - protocol: TCP
     port: 30210

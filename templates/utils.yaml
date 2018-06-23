@@ -9,7 +9,7 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  restartPolicy: "Never"
+  restartPolicy: Never
   volumes:
   - name: {{ template "network.name" . }}-shared-pvc
     persistentVolumeClaim:
@@ -22,11 +22,18 @@ spec:
       claimName: {{ template "network.name" . }}-composer-pvc
   - name: sampleconfig
     emptyDir: {}
+
+# Attempts to separate the /sampleconfig
+# This was bundled in the image
+# The init-container uses an emptydir volume
+# So the git pull is crafted to pull only this directory from the git repo
+#TODO(dazwilkin) Create a separate repo (in the GCP Project?) to host /sampleconfig
+
   initContainers:
   - name: init-service
     image: gcr.io/cloud-builders/git
     command:
-    - sh # override the Builder's default 'git' entrypoint
+    - sh
     - -c
     - |
       git init
@@ -60,6 +67,16 @@ spec:
       name: {{ template "network.name" . }}-shared-pvc
     - mountPath: /sampleconfig
       name: sampleconfig
+
+# sampleconfig/configtx.yaml assumes nodes are named e.g. blockchain-orderer
+# This is improbable
+# With Helm, there's a preference for creating unique deployment names
+# By incorporating the Release Name
+# To accommodate this, the samplesconfig/configtx.yaml is filtered through sed
+# And occurrences of "blockchain-" are replaced with "{{ .Release.Name }}"
+# To achieve this, it's necessary to pass {{ .Release.Name }} to the script
+# Through the environment
+
   - name: configtxgen
     image: {{ .Values.fabric.toolsImage }}
     imagePullPolicy: {{ .Values.fabric.pullPolicy }}
@@ -72,8 +89,7 @@ spec:
         sleep 5s
       done
 
-      #cp /sampleconfig/configtx.yaml /shared/configtx.yaml
-      cat /sampleconfig/configtx.yaml | sed --expression="s|blockchain-|${BLOCKCHAIN_DASH}-|g" > /shared/configtx.yaml
+      cat /sampleconfig/configtx.yaml | sed --expression="s|blockchain-|${DEPLOYMENT_NAME}-|g" > /shared/configtx.yaml
       
       cd /shared/
 
@@ -97,7 +113,7 @@ spec:
        value: {{ template "network.name" . }}-orderer:31010
      - name: FABRIC_CFG_PATH
        value: /shared
-     - name: BLOCKCHAIN_DASH
+     - name: DEPLOYMENT_NAME
        value: {{ template "network.name" . }}
     # - name: GODEBUG
     #   value: "netdns=go"
@@ -120,15 +136,15 @@ spec:
           sleep 5s
         done
 
-        echo \"Starting bootstrap\" &&
+        echo "Starting bootstrap" &&
         cp -r /sampleconfig/cas /shared &&
-        echo \"Done copying\" &&
+        echo "Done copying" &&
         touch /shared/bootstrapped &&
         rm -f /shared/status_configtxgen_complete &&
         mkdir -p /home/composer/.composer &&
         chown 1000 /home/composer/.composer &&
         touch /shared/status_bootstrapping_complete &&
-        echo 'Done with bootstrapping'
+        echo "Done with bootstrapping"
     volumeMounts:
     - mountPath: /shared
       name: {{ template "network.name" . }}-shared-pvc

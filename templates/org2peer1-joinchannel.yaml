@@ -10,12 +10,26 @@ metadata:
     heritage: {{ .Release.Service }}
     component: org2peer1-joinchannel
 spec:
-  restartPolicy: "Never"
+  restartPolicy: Never
   volumes:
   - name: {{ template "network.name" . }}-shared-pvc
     persistentVolumeClaim:
       claimName: {{ template "network.name" . }}-shared-pvc
-
+  initContainers:
+  - name: await-orderer
+    image: busybox:1.28.4
+    command:
+    - sh
+    - -c
+    - |
+      while [ ! -f /shared/status_orderer_complete ]; do
+        echo Waiting for Orderer to complete
+        sleep 5s
+      done
+      echo Orderer completed
+    volumeMounts:
+    - mountPath: /shared
+      name: {{ template "network.name" . }}-shared-pvc
   containers:
   - name: joinchannel
     image: {{ .Values.fabric.peerImage }}

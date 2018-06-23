@@ -10,7 +10,7 @@ metadata:
     heritage: {{ .Release.Service }}
     component: composer-card-import
 spec:
-  restartPolicy: "Never"
+  restartPolicy: Never
   volumes:
   - name: {{ template "network.name" . }}-composer-pvc
     persistentVolumeClaim:
@@ -19,7 +19,7 @@ spec:
     persistentVolumeClaim:
       claimName: {{ template "network.name" . }}-shared-pvc
   initContainers:
-  - name: init-service
+  - name: await-bootstrapped
     image: busybox:1.28.4
     command:
     - sh

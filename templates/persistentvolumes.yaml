@@ -35,9 +35,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  select:
-    matchLabels:
-      name: {{ template "network.name" . }}-shared-pv
+  volumeName: {{ template "network.name" . }}-shared-pv
 ...
 ---
 kind: PersistentVolume
@@ -76,7 +74,5 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  select:
-    matchLabels:
-      name: {{ template "network.name" . }}-shared-pv
+  volumeName: {{ template "network.name" . }}-composer-pv
 ...

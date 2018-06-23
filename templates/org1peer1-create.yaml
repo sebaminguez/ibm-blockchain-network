@@ -28,7 +28,7 @@ spec:
         hostPath:
           path: /var/run/docker.sock
       initContainers:
-      - name: init-service
+      - name: await-bootstrapped
         image: busybox:1.28.4
         command:
         - sh
@@ -39,6 +39,20 @@ spec:
             sleep 5s
           done
           echo bootstrap completed
+        volumeMounts:
+        - mountPath: /shared
+          name: {{ template "network.name" . }}-shared-pvc
+      - name: await-orderer
+        image: busybox:1.28.4
+        command:
+        - sh
+        - -c
+        - |
+          while [ ! -f /shared/status_orderer_complete ]; do
+            echo Waiting for Orderer to complete
+            sleep 5s
+          done
+          echo Orderer completed
         volumeMounts:
         - mountPath: /shared
           name: {{ template "network.name" . }}-shared-pvc

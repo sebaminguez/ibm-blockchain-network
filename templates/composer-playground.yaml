@@ -28,7 +28,7 @@ spec:
         persistentVolumeClaim:
           claimName: {{ template "network.name" . }}-composer-pvc
       initContainers:
-      - name: init-service
+      - name: await-card-import
         image: busybox:1.28.4
         command:
         - sh

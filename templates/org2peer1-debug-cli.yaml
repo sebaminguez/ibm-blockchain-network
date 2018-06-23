@@ -1,53 +1,35 @@
 ---
-apiVersion: v1
 kind: Pod
+apiVersion: v1
 metadata:
-  name: {{ template "network.name" . }}-org2peer1-cc-install
+  name: {{ template "network.name" . }}-org2peer1-debug-cli
   labels:
     app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    component: org2peer1-cc-install
+    component: debug-cli
 spec:
   restartPolicy: Never
   volumes:
   - name: {{ template "network.name" . }}-shared-pvc
     persistentVolumeClaim:
       claimName: {{ template "network.name" . }}-shared-pvc
-  initContainers:
-  initContainers:
-  - name: await-joinchannel-org2peer1
-    image: busybox:1.28.4
+  - name: {{ template "network.name" . }}-composer-pvc
+    persistentVolumeClaim:
+      claimName: {{ template "network.name" . }}-composer-pvc
+  containers:
+  - name: cli
+    image: {{ .Values.fabric.toolsImage }}
+    imagePullPolicy: {{ .Values.fabric.pullPolicy }}
     command:
     - sh
     - -c
     - |
-      while [ ! -f /shared/status_joinchannel_org2peer1_complete ]; do
-        echo Waiting for org2peer1 to join
-        sleep 5s
-      done
-      echo org2peer1 has joined
-    volumeMounts:
-    - mountPath: /shared
-      name: {{ template "network.name" . }}-shared-pvc
-  containers:
-  - name: chaincode-install
-    image: {{ .Values.fabric.toolsImage }}
-    imagePullPolicy: {{ .Values.fabric.pullPolicy }}
-    command: 
-    - sh
-    - -c
-    - |
-      git clone -b v1.0.3 https://github.com/hyperledger/fabric $GOPATH/src/github.com/hyperledger/fabric/
-
-      peer chaincode install \
-      --name ${CHAINCODE_NAME} \
-      --version ${CHAINCODE_VERSION} \
-      --path github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02/
-
-      touch /shared/status_chaincode_install_org2peer1_complete
+      while true; do sleep 15s; done
     env:
+    - name: CHANNEL_NAME
+      value: {{ .Values.channel.name }}
     - name: CHAINCODE_NAME
       value: {{ .Values.chaincode.name }}
     - name: CHAINCODE_VERSION
@@ -60,8 +42,12 @@ spec:
       value: Org2MSP
     - name: CORE_PEER_ADDRESS
       value: {{ template "network.name" . }}-org2peer1:30210
+    - name: ORDERER_URL
+      value: {{ template "network.name" . }}-orderer:31010
     - name: GODEBUG
       value: "netdns=go"
     volumeMounts:
     - mountPath: /shared
       name: {{ template "network.name" . }}-shared-pvc
+    - mountPath: /home/composer/.composer
+      name: {{ template "network.name" . }}-composer-pvc

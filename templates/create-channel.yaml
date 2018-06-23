@@ -10,13 +10,13 @@ metadata:
     heritage: {{ .Release.Service }}
     component: createchannel 
 spec:
-  restartPolicy: "Never"
+  restartPolicy: Never
   volumes:
   - name: {{ template "network.name" . }}-shared-pvc
     persistentVolumeClaim:
       claimName: {{ template "network.name" . }}-shared-pvc
   initContainers:
-  - name: init-service
+  - name: await-bootstrapped
     image: busybox:1.28.4
     command:
     - sh
@@ -30,6 +30,20 @@ spec:
     volumeMounts:
     - mountPath: /shared
       name: {{ template "network.name" . }}-shared-pvc
+  - name: await-orderer
+    image: busybox:1.28.4
+    command:
+    - sh
+    - -c
+    - |
+      while [ ! -f /shared/status_orderer_complete ]; do
+        echo Waiting for Orderer to complete
+        sleep 5s
+      done
+      echo Orderer completed
+    volumeMounts:
+    - mountPath: /shared
+      name: {{ template "network.name" . }}-shared-pvc
   containers:
   - name: createchanneltx
     image: {{ .Values.fabric.toolsImage }}
@@ -40,7 +54,7 @@ spec:
     - |
       cd /shared
       configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ${CHANNEL_NAME}.tx -channelID ${CHANNEL_NAME}
-      touch /shared/status_channeltx_complete # && rm /shared/status_bootstrapping_complete
+      touch /shared/status_channeltx_complete
     env:
     - name: CHANNEL_NAME
       value: {{ .Values.channel.name }}
@@ -60,11 +74,13 @@ spec:
     - |
       while [ ! -f /shared/status_channeltx_complete ]
       do
-        echo Waiting for channeltx
+        echo Waiting for channeltx to complete
         sleep 5s
       done
+      echo channeltx completed
+
       peer channel create --orderer ${ORDERER_URL} --channelID ${CHANNEL_NAME} --file /shared/${CHANNEL_NAME}.tx
-      rm /shared/status_channeltx_complete
+
       touch /shared/status_channelcreate_complete
     env:
     - name: CHANNEL_NAME

@@ -60,7 +60,7 @@ spec:
         - name: ORDERER_GENERAL_LISTENPORT
           value: "31010"
         - name: ORDERER_GENERAL_LOGLEVEL
-          value: debug
+          value: warning
         - name: ORDERER_GENERAL_LOCALMSPDIR
           value: /shared/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp
         - name: ORDERER_GENERAL_LOCALMSPID

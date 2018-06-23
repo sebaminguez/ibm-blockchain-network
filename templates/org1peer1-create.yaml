@@ -98,21 +98,21 @@ spec:
         - name: CORE_PEER_MSPCONFIGPATH
           value: /shared/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp/
         - name: CORE_LOGGING_LEVEL
-          value: debug
+          value: warning
         - name: CORE_LOGGING_PEER
-          value: debug
+          value: warning
         - name: CORE_LOGGING_CAUTHDSL
-          value: debug
+          value: warning
         - name: CORE_LOGGING_GOSSIP
-          value: debug
+          value: warning
         - name: CORE_LOGGING_LEDGER
-          value: debug
+          value: warning
         - name: CORE_LOGGING_MSP
-          value: debug
+          value: warning
         - name: CORE_LOGGING_POLICIES
-          value: debug
+          value: warning
         - name: CORE_LOGGING_GRPC
-          value: debug
+          value: warning
         - name: CORE_PEER_ID
           value: org1peer1
         - name: CORE_PEER_TLS_ENABLED

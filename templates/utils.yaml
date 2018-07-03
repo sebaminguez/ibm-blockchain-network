@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ template "network.name" . }}-utils
+  name: {{ template "network.name" . }}-bootstrap
   labels:
     app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
@@ -40,7 +40,7 @@ spec:
       git remote add -f origin https://github.com/IBM-Blockchain/ibm-container-service
       git config core.sparseCheckout true
       echo "/sampleconfig" >> .git/info/sparse-checkout
-      git pull origin master
+      git checkout "1.0"
     volumeMounts:
     - mountPath: /sampleconfig
       name: sampleconfig

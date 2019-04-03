@@ -40,7 +40,12 @@ spec:
       git remote add -f origin https://github.com/IBM-Blockchain/ibm-container-service
       git config core.sparseCheckout true
       echo "/sampleconfig" >> .git/info/sparse-checkout
-      git checkout "1.0"
+      while true; do
+        git checkout "1.0"
+        if [ $? -eq 0 ]; then
+          break
+        fi
+      done
     volumeMounts:
     - mountPath: /sampleconfig
       name: sampleconfig

@@ -41,12 +41,13 @@ spec:
       git config core.sparseCheckout true
       echo "/sampleconfig" >> .git/info/sparse-checkout
       while true; do
-        #git pull origin master
-        git checkout "1.0"
+        git pull origin master
+        #git checkout "1.0"
         if [ $? -eq 0 ]; then
           break
         fi
       done
+      curl https://raw.githubusercontent.com/nomius/ibm-blockchain-network/master/configtx/configtx.yaml > /sampleconfig/configtx.yaml
     volumeMounts:
     - mountPath: /sampleconfig
       name: sampleconfig

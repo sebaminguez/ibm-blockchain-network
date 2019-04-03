@@ -30,16 +30,16 @@ persistence:
   storageClass: ""
 
 fabric:
-  toolsImage: hyperledger/fabric-tools:x86_64-1.0.3
-  ordererImage: hyperledger/fabric-orderer:x86_64-1.0.3
-  caImage: hyperledger/fabric-ca:x86_64-1.0.3
-  peerImage: hyperledger/fabric-peer:x86_64-1.0.3
+  toolsImage: hyperledger/fabric-tools:amd64-1.2.1
+  ordererImage: hyperledger/fabric-orderer:amd64-1.2.1
+  caImage: hyperledger/fabric-ca:amd64-1.2.1
+  peerImage: hyperledger/fabric-peer:amd64-1.2.1
   pullPolicy: IfNotPresent
 
 composer:
-  cliImage: hyperledger/composer-cli:0.16.2
-  playgroundImage: hyperledger/composer-playground:0.16.2
-  restServerImage: hyperledger/composer-rest-server:0.16.2
+  cliImage: hyperledger/composer-cli:0.20.7
+  playgroundImage: hyperledger/composer-playground:0.20.7
+  restServerImage: hyperledger/composer-rest-server:0.20.7
   pullPolicy: IfNotPresent
   card: PeerAdmin@hlfv1
 

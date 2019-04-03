@@ -41,6 +41,7 @@ spec:
       git config core.sparseCheckout true
       echo "/sampleconfig" >> .git/info/sparse-checkout
       while true; do
+        #git pull origin master
         git checkout "1.0"
         if [ $? -eq 0 ]; then
           break
@@ -56,16 +57,17 @@ spec:
     command:
     - sh
     - -c
+    - -e
     - |
-      cryptogen generate --config /sampleconfig/crypto-config.yaml &&
+      cryptogen generate --config /sampleconfig/crypto-config.yaml
       cp -r crypto-config /shared/
 
       for file in $(find /shared/ -iname *_sk); do
         dir=$(dirname $file); mv ${dir}/*_sk ${dir}/key.pem
       done
 
-      find /shared -type d | xargs chmod a+rx &&
-      find /shared -type f | xargs chmod a+r &&
+      find /shared -type d | xargs chmod a+rx
+      find /shared -type f | xargs chmod a+r
       touch /shared/status_cryptogen_complete
     volumeMounts:
     - mountPath: /shared
@@ -88,6 +90,7 @@ spec:
     command:
     - sh
     - -c
+    - -e
     - |
       while [ ! -f /shared/status_cryptogen_complete ]; do
         echo Waiting for cryptogen
@@ -103,7 +106,7 @@ spec:
       find /shared -type d | xargs chmod a+rx
       find /shared -type f | xargs chmod a+r
 
-      touch /shared/status_configtxgen_complete &&
+      touch /shared/status_configtxgen_complete
       rm -f /shared/status_cryptogen_complete
     env:
      - name: PEERHOST1
@@ -133,6 +136,7 @@ spec:
     command:
       - sh
       - -c
+      - -e
       - |
         sleep 2s
         echo "Starting bootstrap"
@@ -141,14 +145,14 @@ spec:
           sleep 5s
         done
 
-        echo "Starting bootstrap" &&
-        cp -r /sampleconfig/cas /shared &&
-        echo "Done copying" &&
-        touch /shared/bootstrapped &&
-        rm -f /shared/status_configtxgen_complete &&
-        mkdir -p /home/composer/.composer &&
-        chown 1000 /home/composer/.composer &&
-        touch /shared/status_bootstrapping_complete &&
+        echo "Starting bootstrap"
+        cp -r /sampleconfig/cas /shared
+        echo "Done copying"
+        touch /shared/bootstrapped
+        rm -f /shared/status_configtxgen_complete
+        mkdir -p /home/composer/.composer
+        chown 1000 /home/composer/.composer
+        touch /shared/status_bootstrapping_complete
         echo "Done with bootstrapping"
     volumeMounts:
     - mountPath: /shared

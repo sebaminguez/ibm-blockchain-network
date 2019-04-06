@@ -38,7 +38,7 @@ spec:
     - sh
     - -c
     - |
-      git clone -b v1.0.3 https://github.com/hyperledger/fabric $GOPATH/src/github.com/hyperledger/fabric/
+      git clone -b release-1.2 https://github.com/hyperledger/fabric $GOPATH/src/github.com/hyperledger/fabric/
 
       peer chaincode install \
       --name ${CHAINCODE_NAME} \

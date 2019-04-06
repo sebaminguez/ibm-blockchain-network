@@ -43,14 +43,14 @@ spec:
 
       while [ ! -f /shared/status_channelcreate_complete ];
       do
-        echo Waiting for Create Channel complete
+        echo Waiting for Create Channel to complete
         sleep 5s
       done
       echo Create Channel completed
 
-      peer channel fetch config --orderer ${ORDERER_URL} --channelID ${CHANNEL_NAME} && \
-      peer channel join --blockpath ${CHANNEL_NAME}_config.block && \
-      touch /shared/status_joinchannel_org1peer1_complete && \
+      #peer channel fetch config --orderer ${ORDERER_URL} --channelID ${CHANNEL_NAME}
+      peer channel join --blockpath ${CHANNEL_NAME}.block
+      touch /shared/status_joinchannel_org1peer1_complete
       echo org1peer1 joined channel
     env:
     - name: CHANNEL_NAME
@@ -63,7 +63,7 @@ spec:
       value: {{ template "network.name" . }}-org1peer1:30110
     - name: CORE_PEER_LOCALMSPID
       value: Org1MSP
-    - name: CORE_LOGGING_LEVEL
+    - name: FABRIC_LOGGING_SPEC
       value: warning
     - name: CORE_PEER_MSPCONFIGPATH
       value: /shared/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp

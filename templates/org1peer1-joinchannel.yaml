@@ -49,6 +49,7 @@ spec:
       echo Create Channel completed
 
       #peer channel fetch config --orderer ${ORDERER_URL} --channelID ${CHANNEL_NAME}
+      cd /shared
       peer channel join --blockpath ${CHANNEL_NAME}.block
       touch /shared/status_joinchannel_org1peer1_complete
       echo org1peer1 joined channel

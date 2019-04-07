@@ -43,7 +43,7 @@ spec:
       peer chaincode install \
       --name ${CHAINCODE_NAME} \
       --version ${CHAINCODE_VERSION} \
-      --path github.com/hyperledger/fabric/tree/release-1.2/examples/chaincode/go/example02/
+      --path github.com/hyperledger/fabric/examples/chaincode/go/example02/
 
       touch /shared/status_chaincode_install_org1peer1_complete
     env:

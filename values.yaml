@@ -54,4 +54,4 @@ channel:
 # Added for Chaincode
 chaincode:
   name: example02
-  version: v1
+  version: 1.0.0

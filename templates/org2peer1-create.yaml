@@ -82,7 +82,7 @@ spec:
         - name: CORE_PEER_GOSSIP_BOOTSTRAP
           value: {{ template "network.name" . }}-org2peer1:30210
         - name: CORE_PEER_GOSSIP_ORGLEADER	
-          value: "true"
+          value: "false"
         - name: CORE_PEER_GOSSIP_SKIPHANDSHAKE	
           value: "true"
         - name: CORE_PEER_COMMITTER_ENABLED

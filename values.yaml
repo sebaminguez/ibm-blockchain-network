@@ -53,5 +53,5 @@ channel:
 
 # Added for Chaincode
 chaincode:
-  name: example02
+  name: experience
   version: 1.0.0

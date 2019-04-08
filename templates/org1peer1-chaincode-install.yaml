@@ -38,13 +38,13 @@ spec:
     - sh
     - -c
     - |
-      git clone -b release-1.2 https://github.com/hyperledger/fabric-test.git
+      git clone -b master https://innersource.accenture.com/scm/a630/fy19_dlt.git
 
       peer chaincode install \
       --name ${CHAINCODE_NAME} \
       --version ${CHAINCODE_VERSION} \
       --lang node \
-      --path fabric-test/chaincodes/example02/node/
+      --path fy19_dlt/
 
       touch /shared/status_chaincode_install_org1peer1_complete
     env:

@@ -42,9 +42,9 @@ spec:
     - -c
     - |
       #echo $K8S_PROFILE > connection.json
-      curl https://raw.githubusercontent.com/cdesiderioarana/ibm-blockchain-network/master/configtx/profile.json > /sampleconfig/profile.json
+      curl https://raw.githubusercontent.com/cdesiderioarana/ibm-blockchain-network/master/configtx/profile.json > /shared/profile.json
 
-      cat /sampleconfig/profile.json | \
+      cat /shared/profile.json | \
       sed \
       --expression="s|%NETWORK_NAME%|${NETWORK_NAME}|g" \
       --expression="s|%ORDERER_URL%|${ORDERER_URL}|g" \

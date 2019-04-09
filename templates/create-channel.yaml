@@ -54,7 +54,7 @@ spec:
     - -e
     - |
       cd /shared
-      configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ${CHANNEL_NAME}.tx -channelID ${CHANNEL_NAME}
+      configtxgen -profile ComposerChannel -outputCreateChannelTx ${CHANNEL_NAME}.tx -channelID ${CHANNEL_NAME}
       touch /shared/status_channeltx_complete
     env:
     - name: CHANNEL_NAME

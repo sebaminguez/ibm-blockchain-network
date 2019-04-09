@@ -39,7 +39,7 @@ spec:
 
       git clone https://github.com/cdesiderioarana/ibm-blockchain-network.git
       cd ibm-blockchain-network
-      cp configtx/configtx.yaml > /sampleconfig/configtx.yaml
+      cp configtx/configtx.yaml /sampleconfig/configtx.yaml
     volumeMounts:
     - mountPath: /sampleconfig
       name: sampleconfig

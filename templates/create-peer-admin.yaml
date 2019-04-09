@@ -2,13 +2,13 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ template "network.name" . }}-composer-card-import
+  name: {{ template "network.name" . }}-create-admin-card
   labels:
     app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    component: composer-card-import
+    component: create-admin-card
 spec:
   restartPolicy: Never
   volumes:
@@ -34,7 +34,7 @@ spec:
     - name: {{ template "network.name" . }}-shared-pvc
       mountPath: /shared
   containers:
-  - name: composer-card-import
+  - name: create-admin-card
     image: {{ .Values.composer.cliImage }}
     imagePullPolicy: {{ .Values.composer.pullPolicy }}
     command: 

@@ -27,7 +27,7 @@ spec:
         persistentVolumeClaim:
           claimName: {{ template "network.name" . }}-composer-pvc
       initContainers:
-      - name: await-cc-install-org1peer1
+      - name: await-network-install-org1peer1
         image: busybox:1.28.4
         command:
         - sh

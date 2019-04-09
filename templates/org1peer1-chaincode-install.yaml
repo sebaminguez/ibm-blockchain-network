@@ -40,11 +40,18 @@ spec:
     - |
       git clone -b master https://innersource.accenture.com/scm/a630/fy19_dlt.git
 
-      peer chaincode install \
-      --name ${CHAINCODE_NAME} \
-      --version ${CHAINCODE_VERSION} \
-      --lang node \
-      --path fy19_dlt/
+      BN=experience
+      BNA_FILE="$BN.bna"
+      BN_ADMIN_CARD="$BN-admin.card"
+      PEER_ADMIN=PeerAdmin@hlfv1
+      BN_ADMIN_USER=admin
+      BN_ADMIN_PWD=adminpw
+      BN_VERSION=0.2.6
+
+      composer archive create --sourceType dir --sourceName fy19_dlt/
+      composer network install --archiveFile $BN@$BN_VERSION.bna --card PeerAdmin@hlfv1
+      composer network start --networkName $BN --networkVersion $BN_VERSION --networkAdmin $BN_ADMIN_USER --networkAdminEnrollSecret $BN_ADMIN_PWD --card $PEER_ADMIN --file $BN_ADMIN_CARD
+      composer card import --file $BN_ADMIN_CARD --card $BN_ADMIN_USER@$BN
 
       touch /shared/status_chaincode_install_org1peer1_complete
     env:

@@ -37,12 +37,12 @@ spec:
     - -c
     - |
       git init
-      git remote add -f origin https://github.com/IBM-Blockchain/ibm-container-service
+      git remote add -f origin https://github.com/nomius/ibm-blockchain-network
       git config core.sparseCheckout true
       echo "/sampleconfig" >> .git/info/sparse-checkout
       while true; do
         git pull origin master
-        #git checkout "1.0"
+
         if [ $? -eq 0 ]; then
           break
         fi

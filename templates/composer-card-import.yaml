@@ -42,13 +42,16 @@ spec:
     - -c
     - |
       #echo $K8S_PROFILE > connection.json
-      echo $K8S_PROFILE | \
+      curl https://raw.githubusercontent.com/cdesiderioarana/ibm-blockchain-network/master/configtx/profile.json > /sampleconfig/profile.json
+
+      cat /sampleconfig/profile.json | \
       sed \
+      --expression="s|%NETWORK_NAME%|${NETWORK_NAME}|g" \
       --expression="s|%ORDERER_URL%|${ORDERER_URL}|g" \
       --expression="s|%CA_URL%|${CA_URL}|g" \
       --expression="s|%ORG1PEER1_REQUEST_URL%|${ORG1PEER1_REQUEST_URL}|g" \
       --expression="s|%ORG1PEER1_EVENT_URL%|${ORG1PEER1_EVENT_URL}|g" > connection.json
-      
+       
       composer card create \
       -f PeerAdmin.card \
       -p connection.json \
@@ -61,68 +64,7 @@ spec:
       composer card import -f PeerAdmin.card
 
       touch /shared/status_composer_card_import_complete
-    env:
-    - name: K8S_PROFILE
-      value: >
-        {
-          "name": "experience",
-          "x-type": "hlfv1",
-          "x-commitTimeout": 300,
-          "version": "1.0.0",
-          "client": {
-              "organization": "Org1",
-              "connection": {
-                  "timeout": {
-                      "peer": {
-                          "endorser": "300",
-                          "eventHub": "300",
-                          "eventReg": "300"
-                      },
-                      "orderer": "300"
-                  }
-              }
-          },
-          "channels": {
-              "channel1": {
-                  "orderers": [
-                      "%NETWORK_NAME%-orderer"
-                  ],
-                  "peers": {
-                      "%NETWORK_NAME%-org1peer1": {
-                          "endorsingPeer": true,
-                          "chaincodeQuery": true,
-                          "eventSource": true
-              }
-                  }
-              }
-          },
-          "organizations": {
-              "Org1": {
-                  "mspid": "Org1MSP",
-                  "peers": [
-                      "%NETWORK_NAME%-org1peer1"
-                  ],
-                  "certificateAuthorities": [
-                      "%NETWORK_NAME%-ca"
-                  ]
-              }
-          },
-          "orderers": {
-              "%NETWORK_NAME%-orderer": {
-                  "url": "grpc://%ORDERER_URL%"
-              }
-          },
-          "peers": {
-              "%NETWORK_NAME%-org1peer1": {
-                  "url": "grpc://%ORG1PEER1_REQUEST_URL%"	
-              }
-          },
-          "certificateAuthorities": {
-              "%NETWORK_NAME%-ca": {
-                  "url": "http://%CA_URL%"
-              }
-          }
-       }
+    env:    
     - name: NETWORK_NAME
       value: {{ template "network.name" . }}
     - name: ORDERER_URL

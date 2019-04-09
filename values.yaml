@@ -40,6 +40,7 @@ composer:
   cliImage: hyperledger/composer-cli:0.20.7
   playgroundImage: hyperledger/composer-playground:0.20.7
   restServerImage: hyperledger/composer-rest-server:0.20.7
+  couchdb: hyperledger/fabric-couchdb:0.4.10
   pullPolicy: IfNotPresent
   card: PeerAdmin@hlfv1
 

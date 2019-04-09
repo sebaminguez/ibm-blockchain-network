@@ -47,7 +47,7 @@ spec:
         imagePullPolicy: {{ .Values.composer.pullPolicy }}
         env:
         - name: COMPOSER_CARD
-          value: {{ .Values.composer.card }}
+          value: experience-admin.card
         - name: COMPOSER_NAMESPACES
           value: never
         volumeMounts:

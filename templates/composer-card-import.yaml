@@ -119,8 +119,7 @@ spec:
           },
           "certificateAuthorities": {
               "%NETWORK_NAME%-ca": {
-                  "url": "http://%CA_URL%",
-                  "caName": "CA1"
+                  "url": "http://%CA_URL%"
               }
           }
        }

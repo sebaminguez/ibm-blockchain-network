@@ -65,65 +65,67 @@ spec:
     - name: K8S_PROFILE
       value: >
         {
-    "name": "experience",
-    "x-type": "hlfv1",
-    "x-commitTimeout": 300,
-    "version": "1.0.0",
-    "client": {
-        "organization": "Org1",
-        "connection": {
-            "timeout": {
-                "peer": {
-                    "endorser": "300",
-                    "eventHub": "300",
-                    "eventReg": "300"
-                },
-                "orderer": "300"
-            }
-        }
-    },
-    "channels": {
-        "channel1": {
-            "orderers": [
-                "orderer.example.com"
-            ],
-            "peers": {
-                "peer0.org1.example.com": {
-				    "endorsingPeer": true,
-                    "chaincodeQuery": true,
-                    "eventSource": true
-				}
-            }
-        }
-    },
-    "organizations": {
-        "Org1": {
-            "mspid": "Org1MSP",
-            "peers": [
-                "peer0.org1.example.com"
-            ],
-            "certificateAuthorities": [
-                "ca.org1.example.com"
-            ]
-        }
-    },
-    "orderers": {
-        "orderer.example.com": {
-            "url": "url": "grpc://%ORDERER_URL%"
-        }
-    },
-    "peers": {
-        "peer0.org1.example.com": {
-            "url": "grpc://%ORG1PEER1_REQUEST_URL%"	
-        }
-    },
-    "certificateAuthorities": {
-        "ca.org1.example.com": {
-            "url": "http://%CA_URL%",
-            "caName": "CA1"
-        }
-    }
-    }
+          "name": "experience",
+          "x-type": "hlfv1",
+          "x-commitTimeout": 300,
+          "version": "1.0.0",
+          "client": {
+              "organization": "Org1",
+              "connection": {
+                  "timeout": {
+                      "peer": {
+                          "endorser": "300",
+                          "eventHub": "300",
+                          "eventReg": "300"
+                      },
+                      "orderer": "300"
+                  }
+              }
+          },
+          "channels": {
+              "channel1": {
+                  "orderers": [
+                      "%NETWORK_NAME%-orderer"
+                  ],
+                  "peers": {
+                      "%NETWORK_NAME%-org1peer1": {
+                          "endorsingPeer": true,
+                          "chaincodeQuery": true,
+                          "eventSource": true
+              }
+                  }
+              }
+          },
+          "organizations": {
+              "Org1": {
+                  "mspid": "Org1MSP",
+                  "peers": [
+                      "%NETWORK_NAME%-org1peer1"
+                  ],
+                  "certificateAuthorities": [
+                      "%NETWORK_NAME%-ca"
+                  ]
+              }
+          },
+          "orderers": {
+              "%NETWORK_NAME%-orderer": {
+                  "url": "grpc://%ORDERER_URL%"
+              }
+          },
+          "peers": {
+              "%NETWORK_NAME%-org1peer1": {
+                  "url": "grpc://%ORG1PEER1_REQUEST_URL%"	
+              }
+          },
+          "certificateAuthorities": {
+              "%NETWORK_NAME%-ca": {
+                  "url": "http://%CA_URL%",
+                  "caName": "CA1"
+              }
+          }
+       }
+    - name: NETWORK_NAME
+      value: {{ template "network.name" . }}
     - name: ORDERER_URL
       value: {{ template "network.name" . }}-orderer:31010
     - name: CA_URL

@@ -26,6 +26,21 @@ spec:
       - name: {{ template "network.name" . }}-composer-pvc
         persistentVolumeClaim:
           claimName: {{ template "network.name" . }}-composer-pvc
+      initContainers:
+      - name: await-cc-install-org1peer1
+        image: busybox:1.28.4
+        command:
+        - sh
+        - -c
+        - |
+          while [ ! -f /shared/status_chaincode_install_org1peer1_complete ]; do
+            echo Waiting for Chaincode install to complete on org1peer1
+            sleep 5s
+          done
+          echo Chaincode installed on org1peer1
+    volumeMounts:
+    - mountPath: /shared
+      name: {{ template "network.name" . }}-shared-pvc
       containers:
       - name: composer-rest-server
         image: {{ .Values.composer.restServerImage }}

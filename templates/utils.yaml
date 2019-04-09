@@ -37,7 +37,7 @@ spec:
     - -c
     - |
       git init
-      git remote add -f origin https://github.com/nomius/ibm-blockchain-network
+      git remote add -f origin https://github.com/cdesiderioarana/ibm-blockchain-network
       git config core.sparseCheckout true
       echo "/sampleconfig" >> .git/info/sparse-checkout
       while true; do
@@ -47,7 +47,7 @@ spec:
           break
         fi
       done
-      curl https://raw.githubusercontent.com/nomius/ibm-blockchain-network/master/configtx/configtx.yaml > /sampleconfig/configtx.yaml
+      curl https://raw.githubusercontent.com/cdesiderioarana/ibm-blockchain-network/master/configtx/configtx.yaml > /sampleconfig/configtx.yaml
     volumeMounts:
     - mountPath: /sampleconfig
       name: sampleconfig
@@ -102,7 +102,7 @@ spec:
       
       cd /shared/
 
-      configtxgen -profile TwoOrgsOrdererGenesis -outputBlock orderer.block
+      configtxgen -profile ComposerOrdererGenesis -outputBlock orderer.block
 
       find /shared -type d | xargs chmod a+rx
       find /shared -type f | xargs chmod a+r
@@ -114,10 +114,6 @@ spec:
        value: {{ template "network.name" . }}-org1peer1
      - name: PEERPORT1
        value: "30110"
-     - name: PEERHOST2
-       value: {{ template "network.name" . }}-org2peer1
-     - name: PEERPORT2
-       value: "30210"
      - name: ORDERER_URL
        value: {{ template "network.name" . }}-orderer:31010
      - name: FABRIC_CFG_PATH

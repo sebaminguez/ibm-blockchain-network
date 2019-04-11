@@ -116,9 +116,9 @@ spec:
         - name: CORE_PEER_TLS_ENABLED
           value: "false"
         - name: CORE_LEDGER_STATE_STATEDATABASE
-          value: CouchDB
-        - name: CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS
-          value: {{ template "network.name" . }}-couchdb:5984
+          value: goleveldb
+        - name: GODEBUG	
+          value: "netdns=go"
         - name: FABRIC_CFG_PATH
           value: /etc/hyperledger/fabric/
         - name: ORDERER_URL

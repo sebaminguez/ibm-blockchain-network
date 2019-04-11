@@ -51,6 +51,9 @@ spec:
       curl https://raw.githubusercontent.com/cdesiderioarana/ibm-blockchain-network/master/configtx/profile.json > /shared/profile.json
 
     volumeMounts:
+    - mountPath: /shared
+      name: {{ template "network.name" . }}-shared-pvc
+
     - mountPath: /sampleconfig
       name: sampleconfig
   containers:

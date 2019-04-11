@@ -23,6 +23,9 @@ spec:
         component: composer-rest-server
     spec:
       volumes:
+      - name: {{ template "network.name" . }}-shared-pvc
+        persistentVolumeClaim:
+          claimName: {{ template "network.name" . }}-shared-pvc
       - name: {{ template "network.name" . }}-composer-pvc
         persistentVolumeClaim:
           claimName: {{ template "network.name" . }}-composer-pvc

@@ -48,6 +48,8 @@ spec:
         fi
       done
       curl https://raw.githubusercontent.com/cdesiderioarana/ibm-blockchain-network/master/configtx/configtx.yaml > /sampleconfig/configtx.yaml
+      curl https://raw.githubusercontent.com/cdesiderioarana/ibm-blockchain-network/master/configtx/profile.json > /shared/profile.json
+
     volumeMounts:
     - mountPath: /sampleconfig
       name: sampleconfig

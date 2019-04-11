@@ -23,12 +23,6 @@ spec:
   - name: sampleconfig
     emptyDir: {}
 
-# Attempts to separate the /sampleconfig
-# This was bundled in the image
-# The init-container uses an emptydir volume
-# So the git pull is crafted to pull only this directory from the git repo
-#TODO(dazwilkin) Create a separate repo (in the GCP Project?) to host /sampleconfig
-
   initContainers:
   - name: init-service
     image: gcr.io/cloud-builders/git
@@ -53,6 +47,8 @@ spec:
     volumeMounts:
     - mountPath: /sampleconfig
       name: sampleconfig
+    - mountPath: /shared
+      name: {{ template "network.name" . }}-shared-pvc
   containers:
   - name: cryptogen
     image: {{ .Values.fabric.toolsImage }}

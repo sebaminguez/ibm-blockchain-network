@@ -50,7 +50,7 @@ spec:
         imagePullPolicy: {{ .Values.composer.pullPolicy }}
         env:
         - name: DB_URL
-          value: http://localhost:5984/member_db
+          value: http://{{ template "network.name" . }}-couchdb:5984/member_db
 ...
 ---
 # The service to expose composer rest server

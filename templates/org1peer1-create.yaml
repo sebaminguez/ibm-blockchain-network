@@ -89,10 +89,6 @@ spec:
           value: "true"
         - name: CORE_PEER_PROFILE_ENABLED
           value: "true"
-        # - name: CORE_PEER_DISCOVERY_PERIOD
-        #   value: 60s
-        # - name: CORE_PEER_DISCOVERY_TOUCHPERIOD
-        #   value: 60s
         - name: CORE_VM_ENDPOINT
           value: unix:///host/var/run/docker.sock
         - name: CORE_PEER_LOCALMSPID

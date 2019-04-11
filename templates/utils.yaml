@@ -36,10 +36,18 @@ spec:
     - sh
     - -c
     - |
-
-      git clone https://github.com/cdesiderioarana/ibm-blockchain-network.git
-      cd ibm-blockchain-network
-      cp configtx/configtx.yaml /sampleconfig/configtx.yaml
+      git init
+      git remote add -f origin https://github.com/IBM-Blockchain/ibm-container-service
+      git config core.sparseCheckout true
+      echo "/sampleconfig" >> .git/info/sparse-checkout
+      while true; do
+        git pull origin master
+        #git checkout "1.0"
+        if [ $? -eq 0 ]; then
+          break
+        fi
+      done
+      curl https://raw.githubusercontent.com/cdesiderioarana/ibm-blockchain-network/master/configtx/configtx.yaml > /sampleconfig/configtx.yaml
     volumeMounts:
     - mountPath: /sampleconfig
       name: sampleconfig

@@ -46,10 +46,11 @@ spec:
       PEER_ADMIN=PeerAdmin@hlfv1
       BN_ADMIN_USER=admin
       BN_ADMIN_PWD=adminpw
-      BN_VERSION=0.2.6
+      BN_VERSION=0.0.0
 
-      composer archive create --sourceType dir --sourceName fy19_dlt/
-      composer network install --archiveFile $BN@$BN_VERSION.bna --card PeerAdmin@hlfv1
+      composer archive create -a $BNA_FILE --sourceType dir --sourceName .
+      BN_VERSION=$(composer archive list -a $BNA_FILE | grep "Version" | cut -d':' -f 2)
+      composer network install --archiveFile $BNA_FILE --card PeerAdmin@hlfv1
       composer network start --networkName $BN --networkVersion $BN_VERSION --networkAdmin $BN_ADMIN_USER --networkAdminEnrollSecret $BN_ADMIN_PWD --card $PEER_ADMIN --file $BN_ADMIN_CARD
       composer card import --file $BN_ADMIN_CARD --card $BN_ADMIN_USER@$BN
 

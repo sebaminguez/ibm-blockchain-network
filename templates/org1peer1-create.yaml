@@ -127,8 +127,6 @@ spec:
           value: /etc/hyperledger/fabric/
         - name: ORDERER_URL
           value: {{ template "network.name" . }}-orderer:31010
-        - name: GODEBUG
-          value: "netdns=go"
         volumeMounts:
         - mountPath: /shared
           name: {{ template "network.name" . }}-shared-pvc

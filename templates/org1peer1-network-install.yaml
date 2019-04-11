@@ -38,8 +38,10 @@ spec:
     - sh
     - -c
     - |
-      git clone -b master https://innersource.accenture.com/scm/a630/fy19_dlt.git
-
+    git add
+      GIT_SSH_COMMAND='ssh -i InnerSourceSumit' 
+      git clone ssh://git@innersource.accenture.com/a630/fy19_infra.git
+    
       BN=experience
       BNA_FILE="$BN.bna"
       BN_ADMIN_CARD="$BN-admin.card"

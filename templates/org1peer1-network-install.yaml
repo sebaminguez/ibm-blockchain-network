@@ -43,7 +43,7 @@ spec:
     - -c
     - |
       cat /secret-volume/ssh-privatekey
-      GIT_SSH_COMMAND="ssh -i /secret-volume/ssh-privatekey" git clone -b master ssh://git@innersource.accenture.com/a630/fy19_dlt.git
+      GIT_SSH_COMMAND="ssh -i /secret-volume/ssh-privatkey" git clone -b master ssh://git@innersource.accenture.com/a630/fy19_dlt.git
     
       BN=experience
       BNA_FILE="$BN.bna"

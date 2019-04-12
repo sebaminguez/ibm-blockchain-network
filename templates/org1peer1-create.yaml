@@ -67,7 +67,7 @@ spec:
           - -c
           - |
             touch /shared/status_org1peer1_complete &&
-            peer node start --peer-defaultchain=false
+            peer node start
         env:
         - name: CORE_PEER_ADDRESSAUTODETECT
           value: "true"
@@ -82,24 +82,20 @@ spec:
         - name: CORE_PEER_GOSSIP_BOOTSTRAP
           value: {{ template "network.name" . }}-org1peer1:30110
         - name: CORE_PEER_GOSSIP_ORGLEADER	
-          value: "true"
+          value: "false"
         - name: CORE_PEER_GOSSIP_SKIPHANDSHAKE	
           value: "true"
         - name: CORE_PEER_COMMITTER_ENABLED
           value: "true"
         - name: CORE_PEER_PROFILE_ENABLED
           value: "true"
-        # - name: CORE_PEER_DISCOVERY_PERIOD
-        #   value: 60s
-        # - name: CORE_PEER_DISCOVERY_TOUCHPERIOD
-        #   value: 60s
         - name: CORE_VM_ENDPOINT
           value: unix:///host/var/run/docker.sock
         - name: CORE_PEER_LOCALMSPID
           value: Org1MSP
         - name: CORE_PEER_MSPCONFIGPATH
           value: /shared/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp/
-        - name: CORE_LOGGING_LEVEL
+        - name: FABRIC_LOGGING_SPEC
           value: warning
         - name: CORE_LOGGING_PEER
           value: warning
@@ -121,14 +117,12 @@ spec:
           value: "false"
         - name: CORE_LEDGER_STATE_STATEDATABASE
           value: goleveldb
-        # - name: PEER_CFG_PATH
-        #   value: peer_config/
+        - name: GODEBUG	
+          value: "netdns=go"
         - name: FABRIC_CFG_PATH
           value: /etc/hyperledger/fabric/
         - name: ORDERER_URL
           value: {{ template "network.name" . }}-orderer:31010
-        - name: GODEBUG
-          value: "netdns=go"
         volumeMounts:
         - mountPath: /shared
           name: {{ template "network.name" . }}-shared-pvc

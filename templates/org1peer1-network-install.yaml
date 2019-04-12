@@ -2,19 +2,23 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ template "network.name" . }}-org1peer1-cc-install
+  name: {{ template "network.name" . }}-org1peer1-network-install
   labels:
     app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    component: org1peer1-cc-install
+    component: org1peer1-network-install
 spec:
   restartPolicy: Never
   volumes:
   - name: {{ template "network.name" . }}-shared-pvc
     persistentVolumeClaim:
       claimName: {{ template "network.name" . }}-shared-pvc
+  - name: secret-volume
+    secret:
+      secretName: ssh-key-secret
+      defaultMode: 0400
   initContainers:
   - name: await-joinchannel-org1peer1
     image: busybox:1.28.4
@@ -31,19 +35,28 @@ spec:
     - mountPath: /shared
       name: {{ template "network.name" . }}-shared-pvc
   containers:
-  - name: chaincode-install
+  - name: network-install
     image: {{ .Values.fabric.toolsImage }}
     imagePullPolicy: {{ .Values.fabric.pullPolicy }}
     command:
     - sh
     - -c
     - |
-      git clone -b v1.0.3 https://github.com/hyperledger/fabric $GOPATH/src/github.com/hyperledger/fabric/
+      GIT_SSH_COMMAND="ssh -i /etc/secret-volume/ssh-privatekey" git clone -b master ssh://git@innersource.accenture.com/a630/fy19_dlt.git
+    
+      BN=experience
+      BNA_FILE="$BN.bna"
+      BN_ADMIN_CARD="$BN-admin.card"
+      PEER_ADMIN=PeerAdmin@hlfv1
+      BN_ADMIN_USER=admin
+      BN_ADMIN_PWD=adminpw
+      BN_VERSION=0.0.0
 
-      peer chaincode install \
-      --name ${CHAINCODE_NAME} \
-      --version ${CHAINCODE_VERSION} \
-      --path github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02/
+      composer archive create -a $BNA_FILE --sourceType dir --sourceName .
+      BN_VERSION=$(composer archive list -a $BNA_FILE | grep "Version" | cut -d':' -f 2)
+      composer network install --archiveFile $BNA_FILE --card PeerAdmin@hlfv1
+      composer network start --networkName $BN --networkVersion $BN_VERSION --networkAdmin $BN_ADMIN_USER --networkAdminEnrollSecret $BN_ADMIN_PWD --card $PEER_ADMIN --file $BN_ADMIN_CARD
+      composer card import --file $BN_ADMIN_CARD --card $BN_ADMIN_USER@$BN
 
       touch /shared/status_chaincode_install_org1peer1_complete
     env:
@@ -64,3 +77,5 @@ spec:
     volumeMounts:
     - mountPath: /shared
       name: {{ template "network.name" . }}-shared-pvc
+    - name: secret-volume
+      mountPath: "/etc/secret-volume"

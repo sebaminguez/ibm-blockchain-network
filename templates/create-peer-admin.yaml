@@ -2,13 +2,13 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ template "network.name" . }}-composer-card-import
+  name: {{ template "network.name" . }}-create-admin-card
   labels:
     app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    component: composer-card-import
+    component: create-admin-card
 spec:
   restartPolicy: Never
   volumes:
@@ -34,7 +34,7 @@ spec:
     - name: {{ template "network.name" . }}-shared-pvc
       mountPath: /shared
   containers:
-  - name: composer-card-import
+  - name: create-admin-card
     image: {{ .Values.composer.cliImage }}
     imagePullPolicy: {{ .Values.composer.pullPolicy }}
     command: 
@@ -42,13 +42,14 @@ spec:
     - -c
     - |
       #echo $K8S_PROFILE > connection.json
-      echo $K8S_PROFILE | \
+      cat /shared/profile.json | \
       sed \
+      --expression="s|%NETWORK_NAME%|${NETWORK_NAME}|g" \
       --expression="s|%ORDERER_URL%|${ORDERER_URL}|g" \
       --expression="s|%CA_URL%|${CA_URL}|g" \
       --expression="s|%ORG1PEER1_REQUEST_URL%|${ORG1PEER1_REQUEST_URL}|g" \
       --expression="s|%ORG1PEER1_EVENT_URL%|${ORG1PEER1_EVENT_URL}|g" > connection.json
-      
+       
       composer card create \
       -f PeerAdmin.card \
       -p connection.json \
@@ -61,31 +62,9 @@ spec:
       composer card import -f PeerAdmin.card
 
       touch /shared/status_composer_card_import_complete
-    env:
-    - name: K8S_PROFILE
-      value: >
-        {
-          "type": "hlfv1",
-          "name": "hlfv1",
-          "orderers": [
-              {
-                  "url": "grpc://%ORDERER_URL%"
-              }
-          ],
-          "ca": {
-              "url": "http://%CA_URL%",
-              "name": "CA1"
-          },
-          "peers": [
-              {
-                  "requestURL": "grpc://%ORG1PEER1_REQUEST_URL%",
-                  "eventURL": "grpc://%ORG1PEER1_EVENT_URL%"
-              }
-          ],
-          "channel": "channel1",
-          "mspID": "Org1MSP",
-          "timeout": 300
-        }
+    env:    
+    - name: NETWORK_NAME
+      value: {{ template "network.name" . }}
     - name: ORDERER_URL
       value: {{ template "network.name" . }}-orderer:31010
     - name: CA_URL

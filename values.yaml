@@ -30,16 +30,17 @@ persistence:
   storageClass: ""
 
 fabric:
-  toolsImage: hyperledger/fabric-tools:x86_64-1.0.3
-  ordererImage: hyperledger/fabric-orderer:x86_64-1.0.3
-  caImage: hyperledger/fabric-ca:x86_64-1.0.3
-  peerImage: hyperledger/fabric-peer:x86_64-1.0.3
+  toolsImage: hyperledger/fabric-tools:1.2.1
+  ordererImage: hyperledger/fabric-orderer:1.2.1
+  caImage: hyperledger/fabric-ca:1.2.1
+  peerImage: hyperledger/fabric-peer:1.2.1
   pullPolicy: IfNotPresent
 
 composer:
-  cliImage: hyperledger/composer-cli:0.16.2
-  playgroundImage: hyperledger/composer-playground:0.16.2
-  restServerImage: hyperledger/composer-rest-server:0.16.2
+  cliImage: hyperledger/composer-cli:0.20.7
+  playgroundImage: hyperledger/composer-playground:0.20.7
+  restServerImage: hyperledger/composer-rest-server:0.20.7
+  couchdb: hyperledger/fabric-couchdb:0.4.10
   pullPolicy: IfNotPresent
   card: PeerAdmin@hlfv1
 
@@ -53,5 +54,5 @@ channel:
 
 # Added for Chaincode
 chaincode:
-  name: example02
-  version: v1
+  name: experience
+  version: 1.0.0

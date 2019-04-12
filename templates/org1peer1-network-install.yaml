@@ -18,7 +18,7 @@ spec:
   - name: secret-volume
     secret:
       secretName: ssh-key-secret
-      defaultMode: 0400
+      defaultMode: 256
   initContainers:
   - name: await-joinchannel-org1peer1
     image: busybox:1.28.4
@@ -42,9 +42,9 @@ spec:
     - sh
     - -c
     - |
-      ls -la /etc/secret-volume/ssh-privatekey
-      cat /etc/secret-volume/ssh-privatekey
-      GIT_SSH_COMMAND="ssh -i /etc/secret-volume/ssh-privatekey" git clone -b master ssh://git@innersource.accenture.com/a630/fy19_dlt.git
+      ls -la /secret-volume/ssh-privatekey
+      cat /secret-volume/ssh-privatekey
+      GIT_SSH_COMMAND="ssh -i /secret-volume/ssh-privatekey" git clone -b master ssh://git@innersource.accenture.com/a630/fy19_dlt.git
     
       BN=experience
       BNA_FILE="$BN.bna"
@@ -80,4 +80,4 @@ spec:
     - mountPath: /shared
       name: {{ template "network.name" . }}-shared-pvc
     - name: secret-volume
-      mountPath: "/etc/secret-volume"
+      mountPath: "/secret-volume"

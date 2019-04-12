@@ -78,5 +78,4 @@ spec:
     - mountPath: /shared
       name: {{ template "network.name" . }}-shared-pvc
     - name: secret-volume
-      readOnly: true
       mountPath: "/etc/secret-volume"
